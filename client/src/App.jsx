@@ -1,12 +1,21 @@
-import { useState } from 'react'
-import { Button } from 'flowbite-react'
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import About from "./pages/About"
+import Home from "./pages/Home"
+import Profile from "./pages/Profile"
+import Login from "./pages/Login"
+import Register from "./pages/Register"
 
 function App() {
   return (
-    <>   
-      <h1 className='text-taupe-700'>Hello, Vite!</h1>
-      <Button color="green">Green</Button>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/about" element={<About />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
