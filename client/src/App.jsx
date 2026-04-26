@@ -5,12 +5,11 @@ import Profile from "./pages/Profile"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Header from "./components/Header"
-import { Flowbite } from "flowbite-react";
+import FooterComp from "./components/Footer"
 
 function App() {
   return (
     <BrowserRouter>
-    <Flowbite>
       <Header />
       <Routes>
         <Route path="/about" element={<About />} />
@@ -19,7 +18,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
-      </Flowbite>
+      <FooterComp />
     </BrowserRouter>
   )
 }

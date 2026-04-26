@@ -59,7 +59,7 @@ return (
             Home
         </NavbarLink>
         <NavbarLink href="/about">About</NavbarLink>
-        <NavbarLink href="/signin">Sign in</NavbarLink>
+        <NavbarLink href="/login">Sign in</NavbarLink>
     </NavbarCollapse>
     </Navbar>
     );
