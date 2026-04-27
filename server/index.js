@@ -6,10 +6,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+const authRoute = require('./routes/auth.route.js');
+app.use('/api/auth', authRoute);
 
 
 
@@ -23,3 +21,16 @@ mongoose.connect(process.env.MONGO_URL)
 .catch((err) => {
     console.log("Database connection failed:", err);
   });
+
+// error handler middleware
+
+app.use((err, req, res, next)=> {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal server error";
+  err.status(statusCode).json({
+    success: false,
+    message,
+    statusCode,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : null,
+  })
+})
