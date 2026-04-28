@@ -1,6 +1,7 @@
 const bcryptjs = require('bcryptjs');
 const ErrorHandler = require("../utils/error");
-const User = require('../model/user.model.js')
+const User = require('../model/user.model.js');
+const jwt = require('jsonwebtoken');
 
 
 const register = async (req, res, next)=> {
@@ -23,4 +24,26 @@ const register = async (req, res, next)=> {
     }
 }
 
-module.exports = {register}
+const login = async (req, res, next) => {
+    try {
+        const {email, password} = req.body;
+        if(!email || !password || email === "" || password === ""){
+            return next(ErrorHandler("All fields are required!", 401))
+        }
+        const user = await User.findOne({email});
+        if(!user){
+            return next(ErrorHandler("User not found", 404));
+        }
+        const isMatch = bcryptjs.compareSync(password, user.password);
+        if(!isMatch){
+            return next(ErrorHandler("Invalid credentials", 401))
+        }
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '1d'});
+        const {password: pw, ...rest} = user._doc;
+        res.status(200).cookie('access_token', token, {httpOnly: true}).json(rest)
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = {register, login}
