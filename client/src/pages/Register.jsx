@@ -1,6 +1,6 @@
 import { Button, Label, TextInput } from "flowbite-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Register() {
   const [formData, setFormData] = useState({});
@@ -52,7 +52,7 @@ function Register() {
 
           {/* Username */}
           <div>
-            <Label htmlFor="username" className="text-gray-700">
+            <Label htmlFor="username" className="text-gray-700 dark:text-gray-700">
               Username
             </Label>
             <TextInput
@@ -67,7 +67,7 @@ function Register() {
 
           {/* Email */}
           <div>
-            <Label htmlFor="email" className="text-gray-700">
+            <Label htmlFor="email" className="text-gray-700 dark:text-gray-700">
               Email
             </Label>
             <TextInput
@@ -82,7 +82,7 @@ function Register() {
 
           {/* Password */}
           <div>
-            <Label htmlFor="password" className="text-gray-700">
+            <Label htmlFor="password" className="text-gray-700 dark:text-gray-700">
               Password
             </Label>
             <TextInput
@@ -107,9 +107,9 @@ function Register() {
         {/* Footer */}
         <p className="text-sm text-gray-500 mt-6 text-center">
           Already have an account?{" "}
-          <span className="text-blue-600 cursor-pointer hover:underline">
-            Sign in
-          </span>
+          <Link to={'/login'} className="text-blue-600 cursor-pointer hover:underline">
+            Login
+          </Link>
         </p>
 
       </div>
