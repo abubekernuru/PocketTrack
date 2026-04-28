@@ -6,6 +6,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(express.json());
 const authRoute = require('./routes/auth.route.js');
 app.use('/api/auth', authRoute);
 
@@ -27,7 +28,7 @@ mongoose.connect(process.env.MONGO_URL)
 app.use((err, req, res, next)=> {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal server error";
-  err.status(statusCode).json({
+  res.status(statusCode).json({
     success: false,
     message,
     statusCode,
