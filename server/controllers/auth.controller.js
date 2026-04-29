@@ -32,7 +32,7 @@ const login = async (req, res, next) => {
         }
         const user = await User.findOne({email});
         if(!user){
-            return next(ErrorHandler("User not found", 404));
+            return next(new ErrorHandler("User not found", 404));
         }
         const isMatch = bcryptjs.compareSync(password, user.password);
         if(!isMatch){
@@ -46,4 +46,8 @@ const login = async (req, res, next) => {
     }
 }
 
-module.exports = {register, login}
+const checkUser = async (req, res, next)=>{
+    res.json({ userId: req.user.id});
+}
+
+module.exports = {register, login, checkUser}

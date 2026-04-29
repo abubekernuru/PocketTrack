@@ -2,8 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
+const cookieParser = require('cookie-parser');
 
 const app = express();
+app.use(cookieParser());
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
