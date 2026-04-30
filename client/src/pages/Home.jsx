@@ -1,8 +1,11 @@
-import React from 'react'
+import { useSelector, useDispatch } from "react-redux";
+import { signInStart, signInSuccess, signInFailure } from "../redux/user/user.slice";
 
 function Home() {
+  const {loading, error, currentUser} = useSelector((state)=>state.user);
+  const dispatch = useDispatch();
   return (
-    <div>Home</div>
+    <div>Welcome to home {currentUser && currentUser.username}</div>
   )
 }
 

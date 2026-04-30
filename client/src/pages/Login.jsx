@@ -1,10 +1,14 @@
 import { Button, Label, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { signInStart, signInSuccess, signInFailure } from "../redux/user/user.slice";
 
 function Login() {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
+  const {loading, error, currentUser} = useSelector((state)=>state.user);
+  const dispatch = useDispatch();
 
 
   const handleChange = (e)=> {
@@ -13,6 +17,7 @@ function Login() {
   const handleSubmit = async (e)=>{
     e.preventDefault();
     try {
+      dispatch(signInStart())
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -27,9 +32,11 @@ function Login() {
       if(res.ok){
         navigate('/')
         console.log(data)
+        dispatch(signInSuccess(data))
       }
     } catch (error) {
       console.log(error.message)
+      dispatch(signInFailure(error.message))
     }
   }
 
@@ -81,9 +88,10 @@ function Login() {
           {/* Button */}
           <Button
             type="submit"
+            disabled={loading}
             className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200 cursor-pointer"
           >
-            Login
+            { loading ? "Loading..." :"Login"}
           </Button>
 
         </form>

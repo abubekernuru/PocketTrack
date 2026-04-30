@@ -38,7 +38,7 @@ const login = async (req, res, next) => {
         if(!isMatch){
             return next(ErrorHandler("Invalid credentials", 401))
         }
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '1d'});
+        const token = jwt.sign({id: user._id, username: user.username}, process.env.JWT_SECRET, {expiresIn: '1d'});
         const {password: pw, ...rest} = user._doc;
         res.status(200).cookie('access_token', token, {httpOnly: true}).json(rest)
     } catch (error) {
@@ -47,7 +47,7 @@ const login = async (req, res, next) => {
 }
 
 const checkUser = async (req, res, next)=>{
-    res.json({ userId: req.user.id});
+    res.json({ userId: req.user.id, username: req.user.username });
 }
 
 module.exports = {register, login, checkUser}
