@@ -14,8 +14,10 @@ NavbarToggle,
 TextInput,
 } from "flowbite-react";
 import { AiOutlineSearch } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
 
 export function Header() {
+    const {currentUser} = useSelector((state)=>state.user);
 return (
     <Navbar fluid rounded className="border-b-2">
         <NavbarBrand href="/">
@@ -35,16 +37,18 @@ return (
         </Button>
     <div className="flex md:order-2">
         <DarkThemeToggle className="mr-2" />
+        { currentUser && 
         <Dropdown
             arrowIcon={false}
             inline
             label={
-            <Avatar alt="User settings" img="https://flowbite.com/docs/images/people/profile-picture-5.jpg" rounded />
+            <Avatar alt="User settings" img={currentUser.avatar} rounded />
             }
-        >
+        >            
         <DropdownHeader>
-            <span className="block text-sm">Bonnie Green</span>
-            <span className="block truncate text-sm font-medium">name@flowbite.com</span>
+            {/* to do change username into first and lastname */}         
+            <span className="block text-sm">{currentUser.username}</span>
+            <span className="block truncate text-sm font-medium">{currentUser.email}</span>
             </DropdownHeader>
             <DropdownItem>Dashboard</DropdownItem>
             <DropdownItem>Settings</DropdownItem>
@@ -52,6 +56,7 @@ return (
             <DropdownDivider />
             <DropdownItem>Sign out</DropdownItem>
         </Dropdown>
+        }
         <NavbarToggle />
     </div>
     <NavbarCollapse>
