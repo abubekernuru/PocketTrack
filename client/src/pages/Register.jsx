@@ -27,6 +27,7 @@ function Register() {
       });
       const data = await res.json();
       if(!res.ok){
+        dispatch(signInFailure(data.message || "Registration failed!"))
         return;
       }
       if(res.ok){
@@ -109,7 +110,7 @@ function Register() {
           >
             { loading ? "Loading..." : "Create Account"}
           </Button>
-          <Alert>
+          <Alert color="failure" className={`${error ? "block" : "hidden"}`}>
             {error && error}
           </Alert>
         </form>

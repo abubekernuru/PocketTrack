@@ -14,7 +14,7 @@ NavbarToggle,
 TextInput,
 } from "flowbite-react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 export function Header() {
     const {currentUser} = useSelector((state)=>state.user);
@@ -64,7 +64,9 @@ return (
             Home
         </NavbarLink>
         <NavbarLink href="/about">About</NavbarLink>
+        {!currentUser && 
         <NavbarLink href="/login">Sign in</NavbarLink>
+        }
     </NavbarCollapse>
     </Navbar>
     );
