@@ -1,7 +1,6 @@
 import {
 Avatar,
-    Button,
-    DarkThemeToggle,
+Button,
 Dropdown,
 DropdownDivider,
 DropdownHeader,
@@ -14,10 +13,15 @@ NavbarToggle,
 TextInput,
 } from "flowbite-react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleTheme } from "../redux/theme/themeSlice";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 export function Header() {
     const {currentUser} = useSelector((state)=>state.user);
+    const { theme } = useSelector((state) => state.theme);
+    const dispatch = useDispatch();
+
 return (
     <Navbar fluid rounded className="border-b-2">
         <NavbarBrand href="/">
@@ -36,7 +40,9 @@ return (
             <AiOutlineSearch />
         </Button>
     <div className="flex md:order-2">
-        <DarkThemeToggle className="mr-2" />
+        <Button onClick={() => dispatch(toggleTheme())} color="gray" pill>
+            {theme === "light" ? <FaMoon /> : <FaSun />}
+        </Button>
         { currentUser && 
         <Dropdown
             arrowIcon={false}
