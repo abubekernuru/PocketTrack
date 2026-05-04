@@ -8,6 +8,10 @@ import Header from "./components/Header"
 import FooterComp from "./components/Footer"
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import PrivateRoutes from "./components/PrivateRoutes"
+import Dashboard from "./pages/Dashboard"
+import ThemeProvider from "./components/ThemeProvider"
+import IsAdminRoutes from "./components/IsAdminRoutes"
 
 function App() {
   
@@ -19,6 +23,7 @@ function App() {
 
   return (
     <BrowserRouter>
+    <ThemeProvider>
       <Header />
       <Routes>
         <Route path="/about" element={<About />} />
@@ -26,8 +31,15 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route element={<PrivateRoutes />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+        <Route element={<IsAdminRoutes />}>
+          
+        </Route>
       </Routes>
       <FooterComp />
+      </ThemeProvider>
     </BrowserRouter>
   )
 }

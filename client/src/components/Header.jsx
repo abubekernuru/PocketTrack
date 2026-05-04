@@ -16,12 +16,11 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
 import { FaMoon, FaSun } from "react-icons/fa";
-
+ 
 export function Header() {
     const {currentUser} = useSelector((state)=>state.user);
     const { theme } = useSelector((state) => state.theme);
     const dispatch = useDispatch();
-
 return (
     <Navbar fluid rounded className="border-b-2">
         <NavbarBrand href="/">
@@ -41,7 +40,7 @@ return (
         </Button>
     <div className="flex md:order-2">
         <Button onClick={() => dispatch(toggleTheme())} color="gray" pill>
-            {theme === "light" ? <FaMoon /> : <FaSun />}
+            {theme === 'dark' ? <FaSun /> : <FaMoon />}
         </Button>
         { currentUser && 
         <Dropdown
