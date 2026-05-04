@@ -30,11 +30,13 @@ function DashSidebar() {
                     Profile
                 </SidebarItem>
             </Link>
+            {currentUser && currentUser.isAdmin && (
             <Link to={'/dashboard?tab=users'}>
                 <SidebarItem icon={HiOutlineUserGroup} as={"div"}>
                 Users
                 </SidebarItem>
             </Link>
+            )}
             <Link to={'/dashboard?tab=signOut'}>
                 <SidebarItem icon={HiArrowSmLeft} as={"div"}>
                     Sign Out

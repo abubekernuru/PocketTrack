@@ -42,16 +42,16 @@ function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 dark:bg-gray-900 dark:text-white">
       
       {/* Card */}
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 dark:bg-gray-800 dark:text-white">
         
         {/* Title */}
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2 dark:text-white">
           Create Account
         </h1>
-        <p className="text-gray-500 mb-6">
+        <p className="text-gray-500 mb-6 dark:text-gray-400">
           Start tracking your finances with PocketTrack
         </p>
 
@@ -60,7 +60,7 @@ function Register() {
 
           {/* Username */}
           <div>
-            <Label htmlFor="username" className="text-gray-700 dark:text-gray-700">
+            <Label htmlFor="username" className="text-gray-700 dark:text-gray-200">
               Username
             </Label>
             <TextInput
@@ -75,7 +75,7 @@ function Register() {
 
           {/* Email */}
           <div>
-            <Label htmlFor="email" className="text-gray-700 dark:text-gray-700">
+            <Label htmlFor="email" className="text-gray-700 dark:text-gray-200">
               Email
             </Label>
             <TextInput
@@ -90,7 +90,7 @@ function Register() {
 
           {/* Password */}
           <div>
-            <Label htmlFor="password" className="text-gray-700 dark:text-gray-700">
+            <Label htmlFor="password" className="text-gray-700 dark:text-gray-200">
               Password
             </Label>
             <TextInput
@@ -116,7 +116,7 @@ function Register() {
         </form>
 
         {/* Footer */}
-        <p className="text-sm text-gray-500 mt-6 text-center">
+        <p className="text-sm text-gray-500 mt-6 text-center dark:text-gray-400">
           Already have an account?{" "}
           <Link to={'/login'} className="text-blue-600 cursor-pointer hover:underline">
             Login

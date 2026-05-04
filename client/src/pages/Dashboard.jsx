@@ -16,7 +16,7 @@ function Dashboard() {
       }
   },[location.search])
   return (
-    <div className='flex md:flex-row flex-col dark:bg-gray-900 text-white'>
+    <div className='flex md:flex-row flex-col dark:bg-gray-900 text-white min-h-screen'>
       <div className="md:w-56">
       <DashSidebar />
       </div>

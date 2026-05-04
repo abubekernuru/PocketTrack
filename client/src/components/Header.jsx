@@ -16,11 +16,19 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
 import { FaMoon, FaSun } from "react-icons/fa";
- 
+import { useEffect } from "react";
+
 export function Header() {
     const {currentUser} = useSelector((state)=>state.user);
     const { theme } = useSelector((state) => state.theme);
     const dispatch = useDispatch();
+    useEffect(() => {
+    if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+    }, [theme]);
 return (
     <Navbar fluid rounded className="border-b-2">
         <NavbarBrand href="/">

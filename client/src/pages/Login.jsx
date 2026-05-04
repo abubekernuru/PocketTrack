@@ -41,16 +41,16 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 dark:bg-gray-900 dark:text-white">
       
       {/* Card */}
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 dark:bg-gray-800 dark:text-white">
         
         {/* Title */}
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2 dark:text-white">
           Login to your account
         </h1>
-        <p className="text-gray-500 mb-6">
+        <p className="text-gray-500 mb-6 dark:text-gray-400">
           Start tracking your finances with PocketTrack
         </p>
 
@@ -58,7 +58,7 @@ function Login() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Email */}
           <div>
-            <Label htmlFor="email" className="text-gray-700 dark:text-gray-700">
+            <Label htmlFor="email" className="text-gray-700 dark:text-gray-200">
               Email
             </Label>
             <TextInput
@@ -73,7 +73,7 @@ function Login() {
 
           {/* Password */}
           <div>
-            <Label htmlFor="password" className="text-gray-700 dark:text-gray-700">
+            <Label htmlFor="password" className="text-gray-700 dark:text-gray-200">
               Password
             </Label>
             <TextInput
@@ -97,7 +97,7 @@ function Login() {
         </form>
 
         {/* Footer */}
-        <p className="text-sm text-gray-500 mt-6 text-center">
+        <p className="text-sm text-gray-500 mt-6 text-center dark:text-gray-400">
           Don't have an account?{" "}
           <Link to={'/register'} className="text-blue-600 cursor-pointer hover:underline">
             Register

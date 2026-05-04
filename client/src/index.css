@@ -4,14 +4,7 @@
 
 @plugin "flowbite/plugin";
 
-@theme {
-  /* This tells Tailwind v4 to use 'class' strategy for dark mode */
-  --variant-dark: .dark &;
-  
-  /* You can define custom gray colors here if you want 
-     to match your search bar specific 'grayish' look */
-  --color-brand-gray: #374151;
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Flowbite v4 bridge: ensure content is scanned */
 @source "../node_modules/flowbite-react/dist/esm/**/*.mjs";
