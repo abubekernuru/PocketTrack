@@ -3,6 +3,8 @@ import DashSidebar from '../components/DashSidebar'
 import { useLocation } from 'react-router-dom'
 import DashDashboardContent from '../components/DashDashboardContent';
 import DashUsers from '../components/DashUsers';
+import DashProfile from '../components/DashProfile';
+import DashPocketTracker from '../components/DashPocketTracker';
 
 function Dashboard() {
   const [tab, setTab] = useState("dashboard");
@@ -25,8 +27,8 @@ function Dashboard() {
 
         {tab === "dashboard" && <DashDashboardContent />}
         {tab === "users" && <DashUsers />}
-        {/* {tab === "pocketTracker" && <PocketTrackerContent />}
-        {tab === "profile" && <ProfileContent />} */}
+        {tab === "pocketTracker" && <DashPocketTracker />}
+        {tab === "profile" && <DashProfile />}
 
       </div>
     </div>

@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
     profilePicture:{
         type: String,
         default: "https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+    },
+    isAdmin:{
+        type: Boolean,
+        default: false
     }
 
 }, {timestamps: true})

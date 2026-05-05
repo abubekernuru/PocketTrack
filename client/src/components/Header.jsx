@@ -17,6 +17,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export function Header() {
     const {currentUser} = useSelector((state)=>state.user);
@@ -46,8 +47,8 @@ return (
         <Button className='w-12 h-10 lg:hidden' color='gray' pill >
             <AiOutlineSearch />
         </Button>
-    <div className="flex md:order-2">
-        <Button onClick={() => dispatch(toggleTheme())} color="gray" pill>
+    <div className="flex md:order-2 gap-2">
+        <Button onClick={() => dispatch(toggleTheme())} color="gray" pill className="cursor-pointer">
             {theme === 'dark' ? <FaSun /> : <FaMoon />}
         </Button>
         { currentUser && 
@@ -63,9 +64,12 @@ return (
             <span className="block text-sm">{currentUser.username}</span>
             <span className="block truncate text-sm font-medium">{currentUser.email}</span>
             </DropdownHeader>
-            <DropdownItem>Dashboard</DropdownItem>
-            <DropdownItem>Settings</DropdownItem>
-            <DropdownItem>Earnings</DropdownItem>
+            <Link to={'/dashboard?tab=dashboard'}>
+                <DropdownItem>Dashboard</DropdownItem>
+            </Link>
+            <Link to={'/dashboard?tab=profile'}>
+                <DropdownItem>Profile</DropdownItem>
+            </Link>
             <DropdownDivider />
             <DropdownItem>Sign out</DropdownItem>
         </Dropdown>
