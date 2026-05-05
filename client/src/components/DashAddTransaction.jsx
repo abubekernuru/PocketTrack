@@ -1,18 +1,69 @@
-import { useState } from "react";
-import { Button, Radio, Label, Select, Textarea, TextInput, Card } from "flowbite-react";
+import { useEffect, useState } from "react";
+import { Button, Radio, Label, Select, Textarea, TextInput, Card, Alert, Spinner } from "flowbite-react";
 import { HiCalendar, HiCurrencyDollar } from "react-icons/hi";
 
 function DashAddTransaction() {
-  const [trxType, setTrxType] = useState("expense");
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [formData, setFormData] = useState({
+    type: "expense", // default
+    date: new Date().toISOString().split("T")[0],
+    amount: "",
+    category: "food",
+    description: ""
+  })
+  const [trxnAddError, setTrxAddError] = useState(null);
+  const [trxnAddSucess, setTrxAddSucess] = useState(null);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+  if (trxnAddSucess) {
+    const timer = setTimeout(() => {
+      setTrxAddSucess(null);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }
+}, [trxnAddSucess]);
 
-  function handleSubmit(e) {
+  const handleTrxTypeChange = (value)=>{
+    setFormData((prev)=>({...prev, type: value}))
+  }
+  const handleSubmit = async (e)=>{
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
-    console.log("Submitting:", { ...data, trxType, date });
+    try {
+      setLoading(true);
+      setTrxAddError(null);
+      const res = await fetch("/api/transactions", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+      });
+      const data = await res.json();
+      if(!res.ok){
+        setTrxAddError(data.message || "Something went wrong")
+        setLoading(false);
+        return;
+      }
+      setTrxAddSucess("Transaction saved succefully!")
+      setLoading(false);
+      setFormData({
+            type: "expense",
+            date: new Date().toISOString().split("T")[0],
+            amount: "",
+            category: "food",
+            description: ""
+        });
+    } catch (error) {
+      setTrxAddError(error.message);
+      setLoading(false);
+    }
   }
 
+  const handleChange = (e) => {
+    const {id, value} = e.target;
+    setFormData((prev)=>({...prev, [id]: id==="amount"? parseFloat(value): value}))
+  }
+  //(value === "" ? "" : parseFloat(value))
+  // console.log(formData)
   return (
     <div className="p-3 md:p-10 w-full flex">
       <div className="max-w-2xl mx-auto">
@@ -40,9 +91,11 @@ function DashAddTransaction() {
                 min="0" 
                 step="0.01" 
                 type="number" 
+                value={formData.amount}
                 icon={HiCurrencyDollar} 
                 placeholder="0.00" 
-                required 
+                required
+                onChange={handleChange}
               />
             </div>
 
@@ -55,8 +108,8 @@ function DashAddTransaction() {
                     id="income"
                     name="trxType"
                     value="income"
-                    checked={trxType === "income"}
-                    onChange={() => setTrxType("income")}
+                    checked={formData.type === "income"}
+                    onChange={()=>handleTrxTypeChange("income")}
                   />
                   <Label htmlFor="income" className="cursor-pointer text-green-600 font-medium">Income</Label>
                 </div>
@@ -65,8 +118,8 @@ function DashAddTransaction() {
                     id="expense"
                     name="trxType"
                     value="expense"
-                    checked={trxType === "expense"}
-                    onChange={() => setTrxType("expense")}
+                    checked={formData.type === "expense"}
+                    onChange={()=>handleTrxTypeChange("expense")}
                   />
                   <Label htmlFor="expense" className="cursor-pointer text-red-600 font-medium">Expense</Label>
                 </div>
@@ -77,7 +130,7 @@ function DashAddTransaction() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="category" value="Category" className="mb-2 block" />
-                <Select id="category" name="category" required>
+                <Select id="category" name="category" required onChange={handleChange} value={formData.category}>
                   <option value="food">Food</option>
                   <option value="transport">Transport</option>
                   <option value="entertainment">Entertainment</option>
@@ -91,8 +144,8 @@ function DashAddTransaction() {
                   id="date" 
                   type="date" 
                   icon={HiCalendar} 
-                  value={date} 
-                  onChange={(e) => setDate(e.target.value)} 
+                  value={formData.date} 
+                  onChange={handleChange} 
                   required
                 />
               </div>
@@ -101,13 +154,22 @@ function DashAddTransaction() {
             {/* Description */}
             <div>
               <Label htmlFor="description" value="Description (Optional)" className="mb-2 block" />
-              <Textarea id="description" name="description" placeholder="What was this for?" rows={3} />
+              <Textarea id="description" name="description" placeholder="What was this for?" rows={3} onChange={handleChange} value={formData.description} />
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" className="mt-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium cursor-pointer">
-              Save Transaction
+            <Button type="submit" className="mt-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium cursor-pointer" disabled={loading}>
+              {loading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span className="pl-3">Saving...</span>
+                </>
+              ) : (
+                  'Save Transaction'
+              )}
             </Button>
+            {trxnAddError && <Alert color="failure" className="mt-5">{trxnAddError}</Alert>}
+            {trxnAddSucess && <Alert color="success" className="mt-5">{trxnAddSucess}</Alert>}
           </form>
         </Card>
       </div>
