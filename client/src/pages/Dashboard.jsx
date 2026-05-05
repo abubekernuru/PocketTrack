@@ -10,31 +10,34 @@ import DashGetTransactions from '../components/DashGetTransactions';
 function Dashboard() {
   const [tab, setTab] = useState("dashboard");
   const location = useLocation();
+
   useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const tabFromUrl = urlParams.get('tab');
+    if (tabFromUrl) {
+      setTab(tabFromUrl);
+    }
+  }, [location.search]);
 
-      const urlParams = new URLSearchParams(location.search);
-      const tabFromUrl = urlParams.get('tab');
-      if (tabFromUrl) {
-        setTab(tabFromUrl);
-      }
-  },[location.search])
   return (
-    <div className='flex md:flex-row flex-col dark:bg-gray-900 text-white min-h-screen'>
-      <div className="md:w-56">
-      <DashSidebar />
+    <div className='flex flex-col md:flex-row dark:bg-gray-900 min-h-screen'>
+      {/* Sidebar - Fixed width on medium+ screens */}
+      <div className="md:w-64 border-r dark:border-gray-700">
+        <DashSidebar />
       </div>
-      <div>
-        {/* Content for the selected tab */}
 
-        {tab === "dashboard" && <DashDashboardContent />}
-        {tab === "users" && <DashUsers />}
-        {tab === "allTransactions" && <DashGetTransactions />}
-        {tab === "addTransaction" && <DashAddTransaction />}
-        {tab === "profile" && <DashProfile />}
-
+      {/* Content Area - flex-1 makes it fill the rest of the screen */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-4 sm:p-6 lg:p-8">
+          {tab === "dashboard" && <DashDashboardContent />}
+          {tab === "users" && <DashUsers />}
+          {tab === "allTransactions" && <DashGetTransactions />}
+          {tab === "addTransaction" && <DashAddTransaction />}
+          {tab === "profile" && <DashProfile />}
+        </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default Dashboard
