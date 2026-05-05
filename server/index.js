@@ -12,7 +12,7 @@ app.use(express.json());
 const authRoute = require('./routes/auth.route.js');
 const transactionRoute = require('./routes/transaction.route.js');
 app.use('/api/auth', authRoute);
-app.use('/api/transaction', transactionRoute);
+app.use('/api/transactions', transactionRoute);
 
 
 

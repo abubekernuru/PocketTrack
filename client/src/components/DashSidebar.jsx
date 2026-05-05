@@ -2,9 +2,10 @@ import { Sidebar, SidebarItem, SidebarItemGroup, SidebarItems } from "flowbite-r
 import {
     HiArrowSmLeft,
     HiChartPie,
-    HiCurrencyDollar,
     HiOutlineUserGroup,
+    HiPlusCircle,
     HiUser,
+    HiOutlineCollection
 } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -20,9 +21,14 @@ function DashSidebar() {
                 Dashboard
                 </SidebarItem>
             </Link>
-            <Link to={'/dashboard?tab=pocketTracker'}>
-                <SidebarItem icon={HiCurrencyDollar} as={"div"}>
-                    Track Money
+            <Link to={'/dashboard?tab=addTransaction'}>
+                <SidebarItem icon={HiPlusCircle} as={"div"}>
+                    Add Transaction
+                </SidebarItem>
+            </Link>
+            <Link to={'/dashboard?tab=allTransactions'}>
+                <SidebarItem icon={HiOutlineCollection} as={"div"}>
+                    All Transactions
                 </SidebarItem>
             </Link>
             <Link to={'/dashboard?tab=profile'}>
