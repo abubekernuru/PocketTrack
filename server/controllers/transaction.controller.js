@@ -33,6 +33,28 @@ const addTransaction = async (req, res, next) => {
     }
 }
 
+const getTransactions = async(req, res, next)=>{
+    try {
+        const startIndex = parseInt(req.params.startIndex) || 0;
+        const limit = parseInt(req.params.limit) || 9;
+        const sortDirection = req.params.order === "asc" ? 1 : -1;
+        
+        const transactions = await Transaction.find({
+            userId: req.user.id,
+            ...(req.query.type && {type: req.query.type}),
+            ...(req.query.category && {category: req.query.category}),
+        })
+        .sort({date: sortDirection})
+        .skip(startIndex)
+        .limit(limit);
+
+        const totalTransaction = await Transaction.countDocuments({userId: req.user.id});
+        
+        res.status(200).json({transactions, totalTransaction})
+    } catch (error) {
+        next(error)
+    }
+}
 
 
-module.exports = {addTransaction}
+module.exports = {addTransaction, getTransactions}
