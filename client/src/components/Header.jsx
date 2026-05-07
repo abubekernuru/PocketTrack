@@ -84,6 +84,9 @@ return (
         {!currentUser && 
         <NavbarLink href="/login">Sign in</NavbarLink>
         }
+        {currentUser && 
+        <NavbarLink href="/dashboard?tab=dashboard">Dashboard</NavbarLink>
+        }
     </NavbarCollapse>
     </Navbar>
     );
