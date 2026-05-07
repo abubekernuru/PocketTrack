@@ -1,6 +1,10 @@
 
-import { Alert, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
+import { Alert, Badge, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button } from "flowbite-react";
+import {Link} from "react-router-dom"
 import { useEffect, useState } from "react";
+
+
+import { HiOutlineSearch } from "react-icons/hi";
 
 function DashGetTransactions() {
 
@@ -30,7 +34,7 @@ function DashGetTransactions() {
           setLoading(false)
         }
       } catch (error) {
-        console.log(error)
+        // console.log(error)
         setLoading(false)
         setTrxnError(error.message)
       }
@@ -38,15 +42,51 @@ function DashGetTransactions() {
     fetchTrxns();
   },[])
   if(loading){
-    return <div>Loading...</div>
+  return (
+    <div className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+      Loading...
+    </div>
+  );
   }
   if (trxn.length === 0) {
   return (
-    <div className="text-center py-10">
-      No transactions found
+    <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+      {/* Icon with a subtle background */}
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
+        <HiOutlineSearch className="h-10 w-10 text-gray-500 dark:text-gray-400" />
+      </div>
+      <h3 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+        No transactions found
+      </h3>
+      <p className="mb-6 text-sm font-normal text-gray-500 dark:text-gray-400 max-w-sm">
+        We couldn't find any transaction history for this period. Try adjusting your filters or start a new transfer.
+      </p>
+      {/* <Button color="gray" size="sm">
+        Clear All Filters
+      </Button> */}
     </div>
   );
 }
+if (trxnError) {
+  return (
+    <div className="p-5">
+      <Alert color="failure">
+        {trxnError}
+      </Alert>
+    </div>
+  );
+}
+const getCategoryColor = (category) => {
+  const colors = {
+    salary: "success",      // Green
+    food: "warning",       // Yellow/Orange
+    transport: "info",      // Blue
+    entertainment: "purple", // Purple
+    utilities: "failure",   // Red
+  };
+  // Default to gray if the category doesn't match
+  return colors[category] || "gray"; 
+};
   return (
     <div className="overflow-x-auto">
       <Table hoverable>
@@ -67,21 +107,30 @@ function DashGetTransactions() {
           {trxn && trxn.map((trx)=>(
           <TableRow key={trx._id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
             <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-              {trx.type}
+                <span
+                  className={`font-semibold ${
+                    trx.type === "income"
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }`}
+                >
+                  {trx.type}
+                </span>
             </TableCell>
-            <TableCell>{trx.amount}</TableCell>
-            <TableCell>{trx.category}</TableCell>
+            <TableCell className={trx.type==="income"? "text-green-500" :"text-red-500"}>{trx.type==="income"? "+" : "-"}ETB {trx.amount}</TableCell>
+            <TableCell><Badge color={getCategoryColor(trx.category)} size="sm" className="w-fit">{trx.category}</Badge></TableCell>
             <TableCell>{trx.description}</TableCell>
             <TableCell>{new Date(trx.date).toLocaleDateString()}</TableCell>
             <TableCell>
-              <a href="#" className="font-medium text-primary-600 hover:underline dark:text-primary-500">
-                Edit
-              </a>
+              <Link>
+                <span size="sm" className='font-medium text-teal-500 hover:underline cursor-pointer'>
+                  Edit
+                </span>
+              </Link>
             </TableCell>
           </TableRow>))}
         </TableBody>
       </Table>
-      {trxnError && <Alert color="failure">{trxnError} </Alert>}
     </div>
   );
 }
