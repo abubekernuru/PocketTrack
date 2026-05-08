@@ -1,5 +1,5 @@
 
-import { Alert, Badge, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button } from "flowbite-react";
+import { Alert, Badge, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button, Pagination } from "flowbite-react";
 import {Link} from "react-router-dom"
 import { useEffect, useState } from "react";
 
@@ -11,6 +11,7 @@ function DashGetTransactions() {
   const [trxn, setTrxn] = useState([]);
   const [trxnError, setTrxnError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showMore, setShowMore] = useState(true);
 
   useEffect(()=>{
     const fetchTrxns = async ()=>{
@@ -31,7 +32,10 @@ function DashGetTransactions() {
         }
         if(res.ok){
           setTrxn(data.transactions)
-          setLoading(false)
+          setLoading(false);
+          if(data.transactions.length < 9){
+            setShowMore(false);
+          }
         }
       } catch (error) {
         // console.log(error)
@@ -41,52 +45,77 @@ function DashGetTransactions() {
     }
     fetchTrxns();
   },[])
-  if(loading){
-  return (
-    <div className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-      Loading...
-    </div>
-  );
+
+
+
+  const getCategoryColor = (category) => {
+    const colors = {
+      salary: "success",      // Green
+      food: "warning",       // Yellow/Orange
+      transport: "info",      // Blue
+      entertainment: "purple", // Purple
+      utilities: "failure",   // Red
+    };
+    // Default to gray if the category doesn't match
+    return colors[category] || "gray"; 
+  };
+
+  const handleShowMore = async ()=>{
+    try {
+      const startIndex = trxn.length;
+    const res = await fetch(`/api/transactions?startIndex=${startIndex}`, {
+      method: 'GET',
+          headers:{
+            'Content-Type': 'application/json',
+          }
+    })
+    const data = await res.json();
+    if(res.ok){
+      setTrxn((prev)=>[...prev, ...data.transactions])
+      if(data.transactions.length < 9){
+        setShowMore(false);
+      }
+    }
+  } catch (error) {
+    console.log(error)
   }
-  if (trxn.length === 0) {
-  return (
-    <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-      {/* Icon with a subtle background */}
-      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
-        <HiOutlineSearch className="h-10 w-10 text-gray-500 dark:text-gray-400" />
-      </div>
-      <h3 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-        No transactions found
-      </h3>
-      <p className="mb-6 text-sm font-normal text-gray-500 dark:text-gray-400 max-w-sm">
-        We couldn't find any transaction history for this period. Try adjusting your filters or start a new transfer.
-      </p>
-      {/* <Button color="gray" size="sm">
-        Clear All Filters
-      </Button> */}
+}
+
+if(loading){
+return (
+  <div className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+    Loading...
+  </div>
+);
+}
+if (trxn.length === 0) {
+return (
+  <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+    {/* Icon with a subtle background */}
+    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
+      <HiOutlineSearch className="h-10 w-10 text-gray-500 dark:text-gray-400" />
     </div>
-  );
+    <h3 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+      No transactions found
+    </h3>
+    <p className="mb-6 text-sm font-normal text-gray-500 dark:text-gray-400 max-w-sm">
+      We couldn't find any transaction history for this period. Try adjusting your filters or start a new transfer.
+    </p>
+    {/* <Button color="gray" size="sm">
+      Clear All Filters
+    </Button> */}
+  </div>
+);
 }
 if (trxnError) {
-  return (
-    <div className="p-5">
-      <Alert color="failure">
-        {trxnError}
-      </Alert>
-    </div>
-  );
+return (
+  <div className="p-5">
+    <Alert color="failure">
+      {trxnError}
+    </Alert>
+  </div>
+);
 }
-const getCategoryColor = (category) => {
-  const colors = {
-    salary: "success",      // Green
-    food: "warning",       // Yellow/Orange
-    transport: "info",      // Blue
-    entertainment: "purple", // Purple
-    utilities: "failure",   // Red
-  };
-  // Default to gray if the category doesn't match
-  return colors[category] || "gray"; 
-};
   return (
     <div className="overflow-x-auto">
       <Table hoverable>
@@ -131,6 +160,11 @@ const getCategoryColor = (category) => {
           </TableRow>))}
         </TableBody>
       </Table>
+      {showMore && (
+        <div>
+          <button onClick={handleShowMore}>Show More</button>
+        </div>
+      )}
     </div>
   );
 }

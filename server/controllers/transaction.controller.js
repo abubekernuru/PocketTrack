@@ -35,9 +35,9 @@ const addTransaction = async (req, res, next) => {
 
 const getTransactions = async(req, res, next)=>{
     try {
-        const startIndex = parseInt(req.params.startIndex) || 0;
-        const limit = parseInt(req.params.limit) || 9;
-        const sortDirection = req.params.order === "asc" ? 1 : -1;
+        const startIndex = parseInt(req.query.startIndex) || 0;
+        const limit = parseInt(req.query.limit) || 9;
+        const sortDirection = req.query.order === "asc" ? 1 : -1;
         
         const transactions = await Transaction.find({
             userId: req.user.id,
