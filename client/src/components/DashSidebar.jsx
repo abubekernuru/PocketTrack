@@ -5,7 +5,10 @@ import {
     HiOutlineUserGroup,
     HiPlusCircle,
     HiUser,
-    HiOutlineCollection
+    HiOutlineCollection,
+    HiChartBar,
+    HiOutlineChartBar,
+    HiOutlineChartPie
 } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -30,7 +33,7 @@ function DashSidebar() {
         <SidebarItems>
         <SidebarItemGroup className="flex flex-col gap-1">
             <Link to="/dashboard?tab=dashboard">
-                <SidebarItem icon={HiChartPie} as={"div"} active={tab === "dashboard"}>
+                <SidebarItem icon={HiChartBar} as={"div"} active={tab === "dashboard"}>
                 Dashboard
                 </SidebarItem>
             </Link>
@@ -42,6 +45,11 @@ function DashSidebar() {
             <Link to={'/dashboard?tab=allTransactions'}>
                 <SidebarItem icon={HiOutlineCollection} as={"div"} active={tab === "allTransactions"}>
                     All Transactions
+                </SidebarItem>
+            </Link>
+            <Link to={'/dashboard?tab=analytics'}>
+                <SidebarItem icon={HiOutlineChartPie} as={"div"} active={tab === "analytics"}>
+                    Analytics
                 </SidebarItem>
             </Link>
             <Link to={'/dashboard?tab=profile'}>

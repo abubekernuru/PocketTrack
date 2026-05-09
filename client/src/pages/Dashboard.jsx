@@ -6,6 +6,7 @@ import DashUsers from '../components/DashUsers';
 import DashProfile from '../components/DashProfile';
 import DashAddTransaction from '../components/DashAddTransaction';
 import DashGetTransactions from '../components/DashGetTransactions';
+import DashAnalytics from '../components/DashAnalytics';
 
 function Dashboard() {
   const [tab, setTab] = useState("dashboard");
@@ -33,6 +34,7 @@ function Dashboard() {
           {tab === "users" && <DashUsers />}
           {tab === "allTransactions" && <DashGetTransactions />}
           {tab === "addTransaction" && <DashAddTransaction />}
+          {tab === "analytics" && <DashAnalytics />}
           {tab === "profile" && <DashProfile />}
         </div>
       </div>
