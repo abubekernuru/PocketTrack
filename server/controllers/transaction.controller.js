@@ -91,5 +91,20 @@ const getSummary = async(req, res, next)=>{
     }
 }
 
+const getCategorySummary = async (req, res, next)=>{
+    try {
+        const categorySummary = await Transaction.aggregate([
+            {
+                $match:{userId: new mongoose.Types.ObjectId(req.user.id), type: "expense"}
+            },
+            {
+                $group:{_id:"$category", total:{$sum: "$amount"}}
+            }
+        ]);
+        res.status(200).json(categorySummary);
+    } catch (error) {
+        next(error);
+    }
+}
 
-module.exports = {addTransaction, getTransactions, getSummary}
+module.exports = {addTransaction, getTransactions, getSummary, getCategorySummary}
