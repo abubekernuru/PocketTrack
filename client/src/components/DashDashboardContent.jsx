@@ -1,13 +1,15 @@
 import {Card} from 'flowbite-react';
 import { useEffect, useMemo, useState } from 'react';
 import {LuTrendingUp, LuCreditCard, LuWallet} from 'react-icons/lu';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
 
 
 function DashDashboardContent() {
   const [loading, setLoading] = useState(false);
+  const [catLoading, setCatLoading] = useState(false);
   const [error, setError] = useState(null);
   const [summary, setSummary] = useState({})
+  const [catSummary, setCatSummary] = useState([]);
 
   useEffect(()=>{
     const summaryData = async()=>{
@@ -39,6 +41,35 @@ function DashDashboardContent() {
     summaryData();  
   },[]);
 
+  useEffect(()=>{
+    const catSummaryData = async ()=>{
+      try {
+        setCatLoading(true)
+        const res = await fetch(`/api/transactions/category-summary`, {
+          method: 'GET',
+          headers: {
+            'Content-Type':'application/json'
+          }
+        });
+        const data = await res.json();
+        if(!res.ok){
+          setCatLoading(false);
+          setError(data.message);
+          return;
+        }
+        if(res.ok){
+          setCatSummary(data);
+          // console.log(data)
+        }
+      } catch (error) {
+        setError(error.message);
+        setCatLoading(false);
+      }
+    }
+    catSummaryData();
+  },[])
+
+
   //bar chart data
   const data = useMemo(() => [
   {
@@ -57,6 +88,13 @@ function DashDashboardContent() {
 
 // bar chart colors
 const colors = ["#22c55e", "#ef4444", summary.balance >= 0 ? "#22c55e" : "#ef4444"]
+// pie chart colors
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+// pie chart data
+const categoryData = catSummary.map((item)=>({
+  name: item._id, value: item.total
+})) 
+
   
 if(loading){
     return (
@@ -64,6 +102,12 @@ if(loading){
           Loading...
         </div>
     );}
+// if(catLoading){
+//     return (
+//         <div className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+//           Loading...
+//         </div>
+//     );}
   if(error){
     return(
           <div className="mb-2 text-xl font-bold tracking-tight text-red-900">
@@ -71,7 +115,7 @@ if(loading){
         </div>)
     }
   return (
-    <div className=''>
+    <div className='flex flex-col'>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 justify-items-center md:justify-items-stretch">
         <Card className="w-full max-w-sm">
           {/* icon for income */}
@@ -108,31 +152,71 @@ if(loading){
           </p>
         </Card>
       </div>
-      <Card className='mt-6'>
-        <div className="mb-4">
-          <h5 className="text-xl font-bold text-gray-900 dark:text-white">Overview</h5>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Income vs Expense vs Balance</p>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-6'>
+        {/* Bar chart */}
+        <div>
+          <Card className='mt-6'>
+            <div className="mb-4">
+              <h5 className="text-xl font-bold text-gray-900 dark:text-white">Overview</h5>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Income vs Expense vs Balance</p>
+            </div>
+              {summary && (
+          /* let's add dynamic colors for the 3 bars,  */
+          <div className="w-full h-[300px] mt-10">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                <YAxis />
+                <Tooltip formatter={(value) => [`ETB ${value.toLocaleString()}`, ""]} />
+                  {/* remove hover effect let's go */}
+                <Bar dataKey="amount"  radius={[6, 6, 0, 0]} isAnimationActive={false}>
+                  {data.map((entry, index) => (
+                    <Cell key={index} fill={colors[index]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+              )}
+          </Card>
         </div>
-    {summary && (
-      /* let's add dynamic colors for the 3 bars,  */
-      <div className="w-full h-[300px] mt-10">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-            <YAxis />
-            <Tooltip formatter={(value) => [`ETB ${value.toLocaleString()}`, ""]} />
-              {/* remove hover effect let's go */}
-            <Bar dataKey="amount"  radius={[6, 6, 0, 0]} isAnimationActive={false}>
-              {data.map((entry, index) => (
-                <Cell key={index} fill={colors[index]} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+        {/* <Pie chart/> */}
+        <div className=''>
+          <Card className="mt-6">
+            <div className="mb-4">
+              <h5 className="text-xl font-bold text-gray-900 dark:text-white">
+                Spending by Category
+              </h5>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Expense breakdown
+              </p>
+            </div>
+                <div className="w-full h-[300px] mt-10">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={categoryData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {categoryData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => [`ETB ${value.toLocaleString()}`, ""]}/>
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+          </Card>
+        </div>
       </div>
-    )}
-      </Card>
     </div>
   )
 }
