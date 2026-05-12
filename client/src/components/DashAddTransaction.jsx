@@ -136,6 +136,8 @@ function DashAddTransaction() {
                   <option value="entertainment">Entertainment</option>
                   <option value="salary">Salary</option>
                   <option value="utilities">Utilities</option>
+                  <option value="houserent">Rent</option>
+                  <option value="beauty">Beauty</option>
                   <option value="other">Other</option>
                 </Select>
               </div>

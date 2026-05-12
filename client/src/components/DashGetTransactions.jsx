@@ -48,17 +48,23 @@ function DashGetTransactions() {
 
 
 
-  const getCategoryColor = (category) => {
-    const colors = {
-      salary: "success",      // Green
-      food: "warning",       // Yellow/Orange
-      transport: "info",      // Blue
-      entertainment: "purple", // Purple
-      utilities: "failure",   // Red
-    };
-    // Default to gray if the category doesn't match
-    return colors[category] || "gray"; 
+const getCategoryColor = (category) => {
+  const colors = {
+    salary: "success",
+    food: "warning",
+    transport: "info",
+    entertainment: "secondary",
+    utilities: "primary",
+    healthCare: "danger",
+    beauty: "light",
+    familyandpersonal: "dark",
+    houserent: "warning",
+    other: "gray"
   };
+
+  return colors[category] || "gray";
+};
+
 
   const handleShowMore = async ()=>{
     try {

@@ -1,1 +1,5 @@
 - when I open the link in browser after a day It always open as registered but when it comes to fetch data it says unauthorized how should it be fixed
+
+-add hover effect for cards in main dashboard page
+
+-update the style of showmore button in transaction page of the dashboard
