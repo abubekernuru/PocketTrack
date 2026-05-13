@@ -4,7 +4,7 @@ import DashboardOverviewChart from './dashboard/DashboardOverviewChart';
 import DashboardCategoryChart from './dashboard/DashboardCategoryChart';
 
 
-function DashDashboardContent() {
+function DashMainOverview() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [summary, setSummary] = useState({})
@@ -14,7 +14,7 @@ function DashDashboardContent() {
     const fetchSummary = async()=>{
       try {
         setLoading(true);
-        const res = await fetch('/api/transactions/summary');
+        const res = await fetch('/api/v1/analytics/summary');
         const data = await res.json();
         if(!res.ok){
           setError(data.message);
@@ -36,7 +36,7 @@ function DashDashboardContent() {
   useEffect(()=>{
     const fetchCategorySummary = async ()=>{
       try {
-        const res = await fetch(`/api/transactions/category-summary`);
+        const res = await fetch(`/api/v1/analytics/by-category`);
         const data = await res.json();
 
         if(!res.ok){
@@ -82,7 +82,7 @@ const categoryData = catSummary.map((item)=>({
   )
 }
 
-export default DashDashboardContent
+export default DashMainOverview
 
 
 

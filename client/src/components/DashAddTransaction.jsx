@@ -30,7 +30,7 @@ function DashAddTransaction() {
     try {
       setLoading(true);
       setTrxAddError(null);
-      const res = await fetch("/api/transactions", {
+      const res = await fetch("/api/v1/transactions", {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

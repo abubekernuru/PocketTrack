@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import DashSidebar from '../components/DashSidebar'
-import { useLocation } from 'react-router-dom'
-import DashDashboardContent from '../components/DashDashboardContent';
+import DashSidebar from '../components/DashSidebar';
+import { useLocation } from 'react-router-dom';
 import DashUsers from '../components/DashUsers';
 import DashProfile from '../components/DashProfile';
 import DashAddTransaction from '../components/DashAddTransaction';
 import DashGetTransactions from '../components/DashGetTransactions';
 import DashAnalytics from '../components/DashAnalytics';
+import DashMainOverview from '../components/DashMainOverview';
 
 function Dashboard() {
   const [tab, setTab] = useState("dashboard");
@@ -30,7 +30,7 @@ function Dashboard() {
       {/* Content Area - flex-1 makes it fill the rest of the screen */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-4 sm:p-6 lg:p-8">
-          {tab === "dashboard" && <DashDashboardContent />}
+          {tab === "dashboard" && <DashMainOverview />}
           {tab === "users" && <DashUsers />}
           {tab === "allTransactions" && <DashGetTransactions />}
           {tab === "addTransaction" && <DashAddTransaction />}

@@ -18,7 +18,7 @@ function DashGetTransactions() {
       try {
         setLoading(true);
         setTrxnError(null);
-        const res = await fetch('/api/transactions', {
+        const res = await fetch('/api/v1/transactions', {
           method: 'GET',
           headers:{
             'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ const getCategoryColor = (category) => {
   const handleShowMore = async ()=>{
     try {
       const startIndex = trxn.length;
-    const res = await fetch(`/api/transactions?startIndex=${startIndex}`, {
+    const res = await fetch(`/api/v1/transactions?startIndex=${startIndex}`, {
       method: 'GET',
           headers:{
             'Content-Type': 'application/json',

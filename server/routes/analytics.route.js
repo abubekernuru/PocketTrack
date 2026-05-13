@@ -1,11 +1,9 @@
 const express = require('express');
-const { addTransaction, getTransactions, getSummary, getCategorySummary } = require('../controllers/transaction.controller.js');
+const { getSummary, getCategorySummary } = require('../controllers/analytics.controller.js');
 const { verifyUser } = require('../middleware/auth.middleware');
 const router = express.Router();
 
 
-router.post('/', verifyUser, addTransaction);
-router.get('/',verifyUser, getTransactions);
 router.get('/summary', verifyUser, getSummary);
 router.get('/by-category', verifyUser, getCategorySummary);
 

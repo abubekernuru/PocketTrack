@@ -1,13 +1,11 @@
 import { Sidebar, SidebarItem, SidebarItemGroup, SidebarItems } from "flowbite-react";
 import {
     HiArrowSmLeft,
-    HiChartPie,
     HiOutlineUserGroup,
     HiPlusCircle,
     HiUser,
     HiOutlineCollection,
     HiChartBar,
-    HiOutlineChartBar,
     HiOutlineChartPie
 } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";

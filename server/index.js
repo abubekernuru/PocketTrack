@@ -11,8 +11,10 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 const authRoute = require('./routes/auth.route.js');
 const transactionRoute = require('./routes/transaction.route.js');
+const analyticsRoute = require('./routes/analytics.route.js');
 app.use('/api/auth', authRoute);
-app.use('/api/transactions', transactionRoute);
+app.use('/api/v1/transactions', transactionRoute);
+app.use('/api/v1/analytics', analyticsRoute);
 
 
 
