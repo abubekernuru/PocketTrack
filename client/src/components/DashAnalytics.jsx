@@ -1,45 +1,54 @@
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { useEffect, useState } from 'react';
+import {
+  ComposedChart, Line, XAxis, YAxis,
+  CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
 
-const data = [
-  { name: 'Group A', value: 400 },
-  { name: 'Group B', value: 300 },
-  { name: 'Group C', value: 300 },
-  { name: 'Group D', value: 200 },
-];
+function DashAnalytics() {
+  const [monthlySummary, setMonthlySummary]= useState([])
+  useEffect(()=>{
+    const fetchMonthlySummary = async ()=>{
+      try {
+        const res = await fetch(`/api/v1/analytics/monthly-summary`);
+        const data = await res.json();
+        if(!res.ok){
+          return
+        }
+        setMonthlySummary(data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchMonthlySummary();
+  },[])
 
-// const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-const COLORS = [
-  "#22c55e",  // green
-  "#ef4444",  // red
-  "#3b82f6",  // blue
-  "#f59e0b",  // amber
-  "#8b5cf6",  // purple
-  "#ec4899",  // pink
-  "#14b8a6",  // teal
-]
+  const months = ["Jan","Feb","Mar","Apr","May","Jun",
+          "Jul","Aug","Sep","Oct","Nov","Dec"];
+  const chartData = monthlySummary.map((item)=>({
+    name: `${months[item._id.month - 1]} ${item._id.year}`,
+    income:item.totalIncome,
+    expense:item.totalExpense,
+    balance:item.balance
+  }))
 
-const DashAnalytics = () => (
+  return (
   <div>
-    <ResponsiveContainer width="100%" height={400}>
-      <PieChart>
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          innerRadius={60} 
-          outerRadius={80}
-          fill="#8884d8"
-          paddingAngle={5}
-          dataKey="value"
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip />
-      </PieChart>
+    <ResponsiveContainer width="100%" height={300}>
+      <ComposedChart data={chartData}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Line type="monotone" dataKey="income" stroke="#22c55e" dot={true} />
+      <Line type="monotone" dataKey="expense" stroke="#ef4444" dot={true} />
+      <Line type="monotone" dataKey="balance" stroke="#3b82f6" dot={true} />
+      </ComposedChart>
     </ResponsiveContainer>
   </div>
-);
+  )
+}
 
 export default DashAnalytics;
+
+

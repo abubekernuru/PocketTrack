@@ -54,10 +54,14 @@ const getCategorySummary = async (req, res, next)=>{
 
 const getMonthlySummary = async (req, res, next)=>{
     try {
+        const months = parseInt(req.query.month) || 6;
+        const startDate = new Date();
+        startDate.setMonth(startDate.getMonth()-months)
         const monthlySummary = await Transaction.aggregate([
             {
                 $match:{
-                    userId: new mongoose.Types.ObjectId(req.user.id)
+                    userId: new mongoose.Types.ObjectId(req.user.id),
+                    date: {$gte: startDate},
                 }
             },
             {
@@ -77,8 +81,8 @@ const getMonthlySummary = async (req, res, next)=>{
             },
             {
                 $sort:{
-                    "_id.year": -1,
-                    "_id.month": -1
+                    "_id.year": 1,
+                    "_id.month": 1
                 }
             }
         ])
