@@ -3,3 +3,4 @@
 -add hover effect for cards in main dashboard page
 
 -update the style of showmore button in transaction page of the dashboard
+-the input field for add transaction in one day should include adding other category in similar day and put the total of all categories in to the database

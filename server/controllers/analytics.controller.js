@@ -52,4 +52,40 @@ const getCategorySummary = async (req, res, next)=>{
     }
 }
 
-module.exports = {getSummary, getCategorySummary}
+const getMonthlySummary = async (req, res, next)=>{
+    try {
+        const monthlySummary = await Transaction.aggregate([
+            {
+                $match:{
+                    userId: new mongoose.Types.ObjectId(req.user.id)
+                }
+            },
+            {
+                $group:{
+                    _id: {month:{"$month": "$date"}, year:{"$year": "$date"}},
+                    totalIncome: {$sum:{$cond:[{$eq:["$type", "income"]}, "$amount", 0]}},
+                    totalExpense: {$sum:{$cond:[{$eq:["$type", "expense"]}, "$amount", 0]}},
+                }
+            },
+            {
+                $project:{
+                    _id:1,
+                    totalIncome:1,
+                    totalExpense:1,
+                    balance:{$subtract:["$totalIncome", "$totalExpense"]}
+                }
+            },
+            {
+                $sort:{
+                    "_id.year": -1,
+                    "_id.month": -1
+                }
+            }
+        ])
+        res.status(200).json(monthlySummary)
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = {getSummary, getCategorySummary, getMonthlySummary}
