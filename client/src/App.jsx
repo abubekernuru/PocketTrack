@@ -11,6 +11,7 @@ import PrivateRoutes from "./components/PrivateRoutes"
 import Dashboard from "./pages/Dashboard"
 import ThemeProvider from "./components/ThemeProvider"
 import IsAdminRoutes from "./components/IsAdminRoutes"
+import UpdateTransaction from "./pages/UpdateTransaction"
 
 function App() {
   
@@ -31,6 +32,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route element={<PrivateRoutes />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/updatetransaction" element={<UpdateTransaction />} />
         </Route>
         <Route element={<IsAdminRoutes />}>
           

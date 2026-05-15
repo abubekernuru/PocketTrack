@@ -2,6 +2,7 @@
 import { Alert, Badge, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button, Pagination } from "flowbite-react";
 import {Link} from "react-router-dom"
 import { useEffect, useState } from "react";
+import { AiFillDelete, AiTwotoneDelete } from "react-icons/ai"
 
 
 import { HiOutlineSearch } from "react-icons/hi";
@@ -135,6 +136,9 @@ return (
             <TableHeadCell>
               <span className="sr-only">Edit</span>
             </TableHeadCell>
+            <TableHeadCell>
+              <span className="sr-only">Delete</span>
+            </TableHeadCell>
           </TableRow>
         </TableHead>
         
@@ -160,6 +164,13 @@ return (
               <Link>
                 <span size="sm" className='font-medium text-teal-500 hover:underline cursor-pointer'>
                   Edit
+                </span>
+              </Link>
+            </TableCell>
+            <TableCell>
+              <Link>
+                <span size="sm" className='cursor-pointer'>
+                  <AiFillDelete color="red" />
                 </span>
               </Link>
             </TableCell>
