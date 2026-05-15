@@ -32,7 +32,7 @@ return (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
             </Pie>
-            <Tooltip formatter={(value) => [`ETB ${value.toLocaleString()}`, ""]}/>
+            <Tooltip formatter={(value, name) => [`ETB ${value.toLocaleString()}`, name]}/>
             <Legend />
         </PieChart>
         </ResponsiveContainer>

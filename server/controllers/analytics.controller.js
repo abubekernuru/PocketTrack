@@ -54,9 +54,8 @@ const getCategorySummary = async (req, res, next)=>{
 
 const getMonthlySummary = async (req, res, next)=>{
     try {
-        const months = parseInt(req.query.month) || 6;
-        const startDate = new Date();
-        startDate.setMonth(startDate.getMonth()-months)
+        const months = parseInt(req.query.monthLimit) || 6;
+        const startDate = new Date(new Date().setMonth(new Date().getMonth() - months))
         const monthlySummary = await Transaction.aggregate([
             {
                 $match:{
@@ -83,8 +82,12 @@ const getMonthlySummary = async (req, res, next)=>{
                 $sort:{
                     "_id.year": 1,
                     "_id.month": 1
-                }
+                },
+            },
+            {
+                $limit: months 
             }
+            
         ])
         res.status(200).json(monthlySummary)
     } catch (error) {

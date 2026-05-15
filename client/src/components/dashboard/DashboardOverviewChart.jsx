@@ -62,10 +62,7 @@ function DashboardOverviewChart({ summary }) {
             <YAxis />
 
             <Tooltip
-                formatter={(value) => [
-                `ETB ${value.toLocaleString()}`,
-                "",
-                ]}
+                formatter={(value, name) => [`ETB ${value.toLocaleString()}`, name]}
             />
 
             <Bar
