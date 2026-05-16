@@ -179,7 +179,7 @@ return (
             <TableCell>{trx.description}</TableCell>
             <TableCell>{new Date(trx.date).toLocaleDateString()}</TableCell>
             <TableCell>
-              <Link>
+              <Link to={`/updatetransaction/${trx._id}`}>
                 <span size="sm" className='font-medium text-teal-500 hover:underline cursor-pointer'>
                   Edit
                 </span>

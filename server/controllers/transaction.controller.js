@@ -43,6 +43,7 @@ const getTransactions = async(req, res, next)=>{
         const transactions = await Transaction.find({
             userId: req.user.id,
             ...(req.query.type && {type: req.query.type}),
+            ...(req.query.trxnId && {_id: req.query.trxnId}),
             ...(req.query.category && {category: req.query.category}),
         })
         .sort({date: sortDirection})
@@ -146,5 +147,7 @@ const deleteTransaction = async (req, res, next)=>{
         next(error)
     }
 }
+
+
 
 module.exports = {addTransaction, getTransactions, getSummary, getCategorySummary, updateTransaction, deleteTransaction}
