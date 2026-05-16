@@ -107,4 +107,44 @@ const getCategorySummary = async (req, res, next)=>{
     }
 }
 
-module.exports = {addTransaction, getTransactions, getSummary, getCategorySummary}
+const updateTransaction = async (req, res, next)=>{
+    try {
+        const transaction = await Transaction.findById(req.params.trxnId);
+        if(!transaction){
+            return next(new ErrorHandler("Transaction not found.", 401))
+        }
+        if(!req.user.isAdmin && req.user.id !== transaction.userId.toString()){
+            return next(new ErrorHandler("You are not allowed to update this transaction.", 401))
+        }
+        const updateTrxn = await Transaction.findByIdAndUpdate(req.params.trxnId, {
+            $set:{
+                type: req.body.type,
+                amount: req.body.amount,
+                category: req.body.category,
+                description: req.body.description,
+                date: req.body.date
+            }
+        }, {new: true});
+        res.status(200).json(updateTrxn);
+    } catch (error) {
+        next(error)
+    }
+}
+
+const deleteTransaction = async (req, res, next)=>{
+    try {
+        const transaction = await Transaction.findById(req.params.trxnId);
+        if(!transaction){
+            return next(new ErrorHandler("Transaction not found.", 401))
+        }
+        if(!req.user.isAdmin && req.user.id !== transaction.userId.toString()){
+            return next(new ErrorHandler("You are not allowed to delete this transaction.", 401))
+        }
+        await Transaction.findByIdAndDelete(req.params.trxnId);
+        res.status(200).json({"message": "Transaction is deleted succesfully!"})
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = {addTransaction, getTransactions, getSummary, getCategorySummary, updateTransaction, deleteTransaction}
