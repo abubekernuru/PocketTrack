@@ -27,12 +27,12 @@ function Login() {
       });
       const data = await res.json();
       if(!res.ok){
+        dispatch(signInFailure(data.message))
         return;
       }
       if(res.ok){
-        navigate('/')
-        console.log(data)
         dispatch(signInSuccess(data))
+        navigate('/')
       }
     } catch (error) {
       console.log(error.message)
@@ -95,7 +95,9 @@ function Login() {
           </Button>
 
         </form>
-
+        {error && (
+            <p className="text-red-500 text-sm">{error}</p>
+          )}
         {/* Footer */}
         <p className="text-sm text-gray-500 mt-6 text-center dark:text-gray-400">
           Don't have an account?{" "}

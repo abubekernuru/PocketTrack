@@ -32,7 +32,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route element={<PrivateRoutes />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/updatetransaction" element={<UpdateTransaction />} />
+          <Route path="/updatetransaction/:trxnId" element={<UpdateTransaction />} />
         </Route>
         <Route element={<IsAdminRoutes />}>
           
