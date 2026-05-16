@@ -1,11 +1,11 @@
 
-import { Alert, Badge, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button, Pagination } from "flowbite-react";
+import { Alert, Badge, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button, Pagination, Modal, ModalHeader, ModalBody } from "flowbite-react";
 import {Link} from "react-router-dom"
 import { useEffect, useState } from "react";
-import { AiFillDelete, AiTwotoneDelete } from "react-icons/ai"
+import { AiFillDelete } from "react-icons/ai"
 
 
-import { HiOutlineSearch } from "react-icons/hi";
+import { HiOutlineExclamationCircle, HiOutlineSearch } from "react-icons/hi";
 
 function DashGetTransactions() {
 
@@ -13,6 +13,8 @@ function DashGetTransactions() {
   const [trxnError, setTrxnError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showMore, setShowMore] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [trxnId, setTrxnId] = useState()
 
   useEffect(()=>{
     const fetchTrxns = async ()=>{
@@ -82,6 +84,22 @@ const getCategoryColor = (category) => {
       if(data.transactions.length < 9){
         setShowMore(false);
       }
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const handleDelete = async ()=>{
+  try {
+    setShowModal(false)
+    const res = await fetch(`/api/v1/transactions/delete/${trxnId}`, {
+      method:'DELETE'
+    });
+    const data = await res.json();
+    if(res.ok){
+      setShowModal(false);
+      setTrxn((prev)=>prev.filter((trxn)=>trxn._id !== trxnId))
     }
   } catch (error) {
     console.log(error)
@@ -168,19 +186,39 @@ return (
               </Link>
             </TableCell>
             <TableCell>
-              <Link>
-                <span size="sm" className='cursor-pointer'>
+                <span size="sm" className='cursor-pointer' onClick={()=>{setTrxnId(trx._id); setShowModal(true)}}>
                   <AiFillDelete color="red" />
                 </span>
-              </Link>
             </TableCell>
           </TableRow>))}
         </TableBody>
       </Table>
       {showMore && (
-        <div>
-          <button onClick={handleShowMore}>Show More</button>
+        <div className="flex justify-center w-full py-5">
+          <button onClick={handleShowMore} className="px-6 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 cursor-pointer"
+    >Show More</button>
         </div>
+      )}
+      {showModal && (
+        <Modal show={showModal} size="md" onClose={() => setShowModal(false)} popup>
+          <ModalHeader />
+          <ModalBody>
+            <div className="text-center">
+              <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+              <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                Are you sure you want to delete this transaction?
+              </h3>
+              <div className="flex justify-center gap-4">
+                <Button color="red" onClick={handleDelete} className="cursor-pointer">
+                  Yes, I'm sure
+                </Button>
+                <Button color="alternative" onClick={() => setShowModal(false)} className="cursor-pointer">
+                  No, cancel
+                </Button>
+              </div>
+            </div>
+          </ModalBody>
+        </Modal>
       )}
     </div>
   );
