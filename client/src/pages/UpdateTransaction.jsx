@@ -204,27 +204,29 @@ function UpdateTransaction() {
               <Textarea id="description" name="description" placeholder="What was this for?" rows={3} onChange={handleChange} value={formData.description} />
             </div>
 
-            {/* Submit Button */}
-            <Button type="submit" className="mt-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium cursor-pointer" disabled={saveLoading}>
-              {saveLoading ? (
-                <>
-                  <Spinner size="sm" />
-                  <span className="pl-3">Saving...</span>
-                </>
-              ) : (
-                  'Update Transaction'
-              )}
-            </Button>
-            <Button type="button" className="mt-2 bg-red-700 hover:bg-red-800 text-white font-medium cursor-pointer" disabled={deleteLoading} color={'failure'} onClick={()=>setShowModal(true)}>
-              {deleteLoading ? (
-                <>
-                  <Spinner size="sm" />
-                  <span className="pl-3">Deleting...</span>
-                </>
-              ) : (
-                  'Delete Transaction'
-              )}
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3 mt-2">
+              {/* Submit Button */}
+              <Button type="submit" className="flex-1 mt-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium cursor-pointer" disabled={saveLoading}>
+                {saveLoading ? (
+                  <>
+                    <Spinner size="sm" />
+                    <span className="pl-3">Saving...</span>
+                  </>
+                ) : (
+                    'Update Transaction'
+                )}
+              </Button>
+              <Button type="button" className="flex-1 mt-2 bg-red-700 hover:bg-red-800 text-white font-medium cursor-pointer" disabled={deleteLoading} color={'failure'} outline onClick={()=>setShowModal(true)}>
+                {deleteLoading ? (
+                  <>
+                    <Spinner size="sm" />
+                    <span className="pl-3">Deleting...</span>
+                  </>
+                ) : (
+                    'Delete Transaction'
+                )}
+              </Button>
+            </div>
             {trxnUpdateError && <Alert color="failure" className="mt-5">{trxnUpdateError}</Alert>}
             {trxnUpdateSucess && <Alert color="success" className="mt-5">{trxnUpdateSucess}</Alert>}
           </form>
