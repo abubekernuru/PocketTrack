@@ -1,34 +1,49 @@
 import { useEffect, useState } from "react";
-import { Button, Radio, Label, Select, Textarea, TextInput, Card, Alert, Spinner } from "flowbite-react";
-import { HiCalendar, HiCurrencyDollar } from "react-icons/hi";
-import { useParams } from "react-router-dom";
+import { Button, Radio, Label, Select, Textarea, TextInput, Card, Alert, Spinner, Modal, ModalHeader, ModalBody } from "flowbite-react";
+import { HiCalendar, HiCurrencyDollar, HiOutlineExclamationCircle } from "react-icons/hi";
+import { useParams, useNavigate } from "react-router-dom";
 
 function UpdateTransaction() {
   const [formData, setFormData] = useState({})
-  const [trxnAddError, setTrxAddError] = useState(null);
-  const [trxnAddSucess, setTrxAddSucess] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [trxnUpdateError, setTrxUpdateError] = useState(null);
+  const [trxnUpdateSucess, setTrxUpdateSucess] = useState(null);
+  const [saveLoading, setSaveLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [showModal, setShowModal] = useState(false);
   const { trxnId } = useParams();
+  const navigate = useNavigate();
   useEffect(() => {
-  if (trxnAddSucess) {
+  if (trxnUpdateSucess) {
     const timer = setTimeout(() => {
-      setTrxAddSucess(null);
+      setTrxUpdateSucess(null);
     }, 3000);
     return () => clearTimeout(timer);
   }
-}, [trxnAddSucess]);
+}, [trxnUpdateSucess]);
 
   useEffect(()=>{
     const fetchTrxn = async ()=>{
       try {
+        setLoading(true);
         const res = await fetch(`/api/v1/transactions?trxnId=${trxnId}`);
         const data = await res.json();
+
+        if(!res.ok){
+          setTrxUpdateError("Failed to load transaction")
+          return
+        }
+
         if(res.ok){
-          setFormData(data.transactions[0])
-          console.log(data.transactions[0])
+          setLoading(false);
+          const fetchedTrxn = data.transactions[0];
+          setFormData({
+            ...fetchedTrxn,
+            date: fetchedTrxn.date ? fetchedTrxn.date.split("T")[0] : ""
+          })
         }
       } catch (error) {
-        console.log(error)
+        setTrxUpdateError(error.message)
       }
     }
     fetchTrxn();
@@ -39,10 +54,10 @@ function UpdateTransaction() {
   const handleSubmit = async (e)=>{
     e.preventDefault();
     try {
-      setLoading(true);
-      setTrxAddError(null);
-      const res = await fetch("/api/v1/transactions", {
-          method: 'POST',
+      setSaveLoading(true);
+      setTrxUpdateError(null);
+      const res = await fetch(`/api/v1/transactions/update/${trxnId}`, {
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
@@ -50,31 +65,47 @@ function UpdateTransaction() {
       });
       const data = await res.json();
       if(!res.ok){
-        setTrxAddError(data.message || "Something went wrong")
-        setLoading(false);
+        setTrxUpdateError(data.message || "Something went wrong")
         return;
       }
-      setTrxAddSucess("Transaction saved succefully!")
-      setLoading(false);
-      setFormData({
-            type: "expense",
-            date: new Date().toISOString().split("T")[0],
-            amount: "",
-            category: "food",
-            description: ""
-        });
+      setTrxUpdateSucess("Transaction Updated succefully!")
+      setTimeout(()=>{
+        navigate('/dashboard?tab=allTransactions')
+      }, 1500)
     } catch (error) {
-      setTrxAddError(error.message);
-      setLoading(false);
+      setTrxUpdateError(error.message);
+    } finally {
+      setSaveLoading(false);
     }
   }
 
   const handleChange = (e) => {
     const {id, value} = e.target;
-    setFormData((prev)=>({...prev, [id]: id==="amount"? parseFloat(value): value}))
+    setFormData((prev)=>({...prev, [id]: id==="amount"?(value === "" ? "" : parseFloat(value)): value}))
   }
-  //(value === "" ? "" : parseFloat(value))
-  console.log(formData.type)
+
+  const handleDelete = async ()=>{
+  try {
+    setShowModal(false)
+    setDeleteLoading(true)
+    const res = await fetch(`/api/v1/transactions/delete/${trxnId}`, {
+      method:'DELETE'
+    });
+    const data = await res.json();
+    if(res.ok){
+      setShowModal(false);
+      setTrxUpdateSucess("Transaction Deleted succefully!")
+      setTimeout(()=>{
+        navigate('/dashboard?tab=allTransactions')
+      }, 1500)
+    }
+  } catch (error) {
+    setTrxUpdateSucess("Failed to delete the transaction!")
+  } finally {
+    setDeleteLoading(false)
+  }
+}
+
   return (
     <div className="p-3 md:p-10 w-full flex">
       <div className="max-w-2xl mx-auto">
@@ -85,12 +116,13 @@ function UpdateTransaction() {
             Update Transaction
           </h1>
           <p className="text-gray-500 dark:text-gray-400">
-            Keep track of your finances by logging your daily activity.
+            Edit and update your transaction details below.
           </p>
         </div>
 
         {/* 2. Card Styling: Adds a border/shadow for a "Dashboard" feel */}
         <Card>
+          { loading ? <div className="flex items-center justify-center p-6"><Spinner size='xl' /></div>:(
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             
             {/* Amount */}
@@ -173,21 +205,53 @@ function UpdateTransaction() {
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" className="mt-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium cursor-pointer" disabled={loading}>
-              {loading ? (
+            <Button type="submit" className="mt-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium cursor-pointer" disabled={saveLoading}>
+              {saveLoading ? (
                 <>
                   <Spinner size="sm" />
                   <span className="pl-3">Saving...</span>
                 </>
               ) : (
-                  'Save Transaction'
+                  'Update Transaction'
               )}
             </Button>
-            {trxnAddError && <Alert color="failure" className="mt-5">{trxnAddError}</Alert>}
-            {trxnAddSucess && <Alert color="success" className="mt-5">{trxnAddSucess}</Alert>}
+            <Button type="button" className="mt-2 bg-red-700 hover:bg-red-800 text-white font-medium cursor-pointer" disabled={deleteLoading} color={'failure'} onClick={()=>setShowModal(true)}>
+              {deleteLoading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span className="pl-3">Deleting...</span>
+                </>
+              ) : (
+                  'Delete Transaction'
+              )}
+            </Button>
+            {trxnUpdateError && <Alert color="failure" className="mt-5">{trxnUpdateError}</Alert>}
+            {trxnUpdateSucess && <Alert color="success" className="mt-5">{trxnUpdateSucess}</Alert>}
           </form>
+        )}
         </Card>
       </div>
+            {showModal && (
+              <Modal show={showModal} size="md" onClose={() => setShowModal(false)} popup>
+                <ModalHeader />
+                <ModalBody>
+                  <div className="text-center">
+                    <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+                    <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                      Are you sure you want to delete this transaction?
+                    </h3>
+                    <div className="flex justify-center gap-4">
+                      <Button color="red" onClick={handleDelete} className="cursor-pointer">
+                        Yes, I'm sure
+                      </Button>
+                      <Button color="alternative" onClick={() => setShowModal(false)} className="cursor-pointer">
+                        No, cancel
+                      </Button>
+                    </div>
+                  </div>
+                </ModalBody>
+              </Modal>
+            )}
     </div>
   );
 }
