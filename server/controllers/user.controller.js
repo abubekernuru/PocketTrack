@@ -30,4 +30,27 @@ const updateUser = async (req, res, next)=>{
     }
 }
 
-module.exports = {updateUser}
+const deleteUser = async (req, res, next)=> {
+    try {
+        const {userId} = req.params;
+        if(userId !== req.user.id){
+            return next(new ErrorHandler("You are not allowed to update this user!", 401));
+        }
+        await User.findByIdAndDelete(userId);
+        res.clearCookie("access_token")
+        res.status(200).json("User deleted succefully!")
+    } catch (error) {
+        next(error)
+    }
+}
+
+const logoutUser = async (req, res, next)=> {
+    try {
+        res.clearCookie("access_token");
+        res.status(200).json("User logged out succefully!")
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = {updateUser, deleteUser, logoutUser}

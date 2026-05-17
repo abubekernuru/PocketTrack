@@ -8,15 +8,19 @@ import {
     HiChartBar,
     HiOutlineChartPie
 } from "react-icons/hi";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import {logoutSuccess} from "../redux/user/user.slice.js"
 
 function DashSidebar() {
     const { currentUser } = useSelector((state) => state.user);
 
     const [tab, setTab] = useState("dashboard");
     const location = useLocation();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -25,6 +29,22 @@ function DashSidebar() {
         setTab(tabFromUrl);
     }
     }, [location.search]);
+
+    const handleLogout = async ()=> {
+        try {
+            const res = await fetch(`/api/user/logout`,{
+                method:'POST'
+            })
+            const data = await res.json();
+            if(res.ok){
+                navigate('/login');
+                dispatch(logoutSuccess);
+                alert(data)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
     
     return (
     <Sidebar aria-label="Sidebar" className='w-full md:w-63.9'>
@@ -64,11 +84,9 @@ function DashSidebar() {
             )}
         </SidebarItemGroup>
         <SidebarItemGroup className="border-t border-gray-200 dark:border-gray-700">
-            <Link to={'/sign-out'}>
-                <SidebarItem icon={HiArrowSmLeft} as={"div"}>
+                <SidebarItem icon={HiArrowSmLeft} as={"div"} onClick={handleLogout} className="cursor-pointer">
                     Sign Out
                 </SidebarItem>
-            </Link>
         </SidebarItemGroup>
         </SidebarItems>
     </Sidebar>

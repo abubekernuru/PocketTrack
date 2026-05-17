@@ -1,25 +1,20 @@
 import { Alert, Button, Label, TextInput } from "flowbite-react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { signInStart, signInSuccess, signInFailure } from "../redux/user/user.slice";
+import { updateUserStart, updateSuccess, updateFailure } from "../redux/user/user.slice";
 
 function DashProfile() {
   const [formData, setFormData] = useState({});
-  const navigate = useNavigate();
   const {loading, error, currentUser} = useSelector((state)=>state.user);
   const dispatch = useDispatch();
 
 
-  const handleChange = (e)=> {
-    setFormData({...formData, [e.target.id]: e.target.value})
-  }
   const handleSubmit = async (e)=>{
     e.preventDefault();
     try {
-      dispatch(signInStart())
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
+      dispatch(updateUserStart())
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -27,18 +22,19 @@ function DashProfile() {
       });
       const data = await res.json();
       if(!res.ok){
-        dispatch(signInFailure(data.message || "Registration failed!"))
+        dispatch(updateFailure(data.message || "Registration failed!"))
         return;
       }
       if(res.ok){
-        navigate('/login')
-        console.log(data)
-        dispatch(signInSuccess(data))
+        dispatch(updateSuccess(data))
       }
     } catch (error) {
-      console.log(error.message)
-      dispatch(signInFailure(error.message))
+      dispatch(updateFailure(error.message))
     }
+  }
+
+    const handleChange = (e)=> {
+    setFormData({...formData, [e.target.id]: e.target.value})
   }
 
   return (
@@ -49,11 +45,8 @@ function DashProfile() {
         
         {/* Title */}
         <h1 className="text-3xl font-bold text-gray-800 mb-2 dark:text-white">
-          Create Account
+          Update Your Account
         </h1>
-        <p className="text-gray-500 mb-6 dark:text-gray-400">
-          Start tracking your finances with PocketTrack
-        </p>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -70,6 +63,7 @@ function DashProfile() {
               required
               className="mt-1"
               onChange={handleChange}
+              defaultValue={currentUser.username}
             />
           </div>
 
@@ -85,6 +79,7 @@ function DashProfile() {
               required
               className="mt-1"
               onChange={handleChange}
+              defaultValue={currentUser.email}
             />
           </div>
 
@@ -96,7 +91,6 @@ function DashProfile() {
             <TextInput
               id="password"
               type="password"
-              required
               className="mt-1"
               onChange={handleChange}
             />
@@ -108,20 +102,12 @@ function DashProfile() {
             disabled={loading}
             className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200 cursor-pointer"
           >
-            { loading ? "Loading..." : "Create Account"}
+            { loading ? "Loading..." : "Update Account"}
           </Button>
           <Alert color="failure" className={`${error ? "block" : "hidden"}`}>
             {error && error}
           </Alert>
         </form>
-
-        {/* Footer */}
-        <p className="text-sm text-gray-500 mt-6 text-center dark:text-gray-400">
-          Already have an account?{" "}
-          <Link to={'/login'} className="text-blue-600 cursor-pointer hover:underline">
-            Login
-          </Link>
-        </p>
 
       </div>
     </div>
