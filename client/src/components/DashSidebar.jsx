@@ -39,7 +39,7 @@ function DashSidebar() {
             if(res.ok){
                 navigate('/login');
                 dispatch(logoutSuccess);
-                alert(data)
+                // alert(data)
             }
         } catch (error) {
             console.log(error)

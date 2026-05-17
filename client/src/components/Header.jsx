@@ -56,7 +56,7 @@ return (
             arrowIcon={false}
             inline
             label={
-            <Avatar alt="User settings" img={currentUser.avatar} rounded />
+            <Avatar alt="User settings" img={currentUser.profilePicture} rounded />
             }
         >            
         <DropdownHeader>
