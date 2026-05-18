@@ -18,11 +18,14 @@ import { toggleTheme } from "../redux/theme/themeSlice";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { logoutFailure, logoutSuccess } from "../redux/user/user.slice";
+import { useNavigate } from "react-router-dom";
 
 export function Header() {
-    const {currentUser} = useSelector((state)=>state.user);
+    const {error, loading, currentUser} = useSelector((state)=>state.user);
     const { theme } = useSelector((state) => state.theme);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     useEffect(() => {
     if (theme === 'dark') {
         document.documentElement.classList.add('dark');
@@ -30,6 +33,22 @@ export function Header() {
         document.documentElement.classList.remove('dark');
     }
     }, [theme]);
+
+    const handleLogout = async ()=> {
+        try {
+            const res = await fetch(`/api/user/logout`,{
+                method:'POST'
+            })
+            const data = await res.json();
+            if(!res.ok){
+                dispatch(logoutFailure(data.message))
+            }
+            dispatch(logoutSuccess());
+            navigate('/login');
+        } catch (error) {
+            console.log(error)
+        }
+    }
 return (
     <Navbar fluid rounded className="border-b-2">
         <NavbarBrand href="/">
@@ -56,7 +75,7 @@ return (
             arrowIcon={false}
             inline
             label={
-            <Avatar alt="User settings" img={currentUser.profilePicture} rounded />
+            <Avatar className="cursor-pointer" alt="User settings" img={currentUser.profilePicture} rounded />
             }
         >            
         <DropdownHeader>
@@ -71,7 +90,7 @@ return (
                 <DropdownItem>Profile</DropdownItem>
             </Link>
             <DropdownDivider />
-            <DropdownItem>Sign out</DropdownItem>
+            <DropdownItem onClick={handleLogout}>Sign out</DropdownItem>
         </Dropdown>
         }
         <NavbarToggle />

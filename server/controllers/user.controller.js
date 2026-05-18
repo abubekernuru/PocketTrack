@@ -33,11 +33,13 @@ const updateUser = async (req, res, next)=>{
 const deleteUser = async (req, res, next)=> {
     try {
         const {userId} = req.params;
-        if(userId !== req.user.id){
+        if(req.user.id !== userId && !req.user.isAdmin){
             return next(new ErrorHandler("You are not allowed to update this user!", 401));
         }
         await User.findByIdAndDelete(userId);
-        res.clearCookie("access_token")
+        if (req.user.id === userId) {
+            res.clearCookie("access_token");
+        }
         res.status(200).json("User deleted succefully!")
     } catch (error) {
         next(error)
@@ -53,4 +55,17 @@ const logoutUser = async (req, res, next)=> {
     }
 }
 
-module.exports = {updateUser, deleteUser, logoutUser}
+const getUsers = async (req, res, next)=> {
+    try {
+        const user = await User.findById(req.user.id);
+        if(!user || !user.isAdmin){
+            return next(new ErrorHandler("You are not allowed to see users data!", 403))
+        }
+        const allUsers = await User.find();
+        res.status(200).json(allUsers)
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = {updateUser, deleteUser, logoutUser, getUsers}

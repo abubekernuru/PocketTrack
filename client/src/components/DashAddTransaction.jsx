@@ -158,7 +158,7 @@ function DashAddTransaction() {
             {/* Description */}
             <div>
               <Label htmlFor="description" value="Description (Optional)" className="mb-2 block" />
-              <Textarea id="description" name="description" placeholder="What was this for?" rows={3} onChange={handleChange} value={formData.description} />
+              <Textarea id="description" name="description" placeholder="What was this for? (optional)" rows={3} onChange={handleChange} value={formData.description} />
             </div>
 
             {/* Submit Button */}
