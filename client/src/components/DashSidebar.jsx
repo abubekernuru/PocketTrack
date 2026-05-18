@@ -12,7 +12,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import {logoutSuccess} from "../redux/user/user.slice.js"
+import {logoutFailure, logoutSuccess} from "../redux/user/user.slice.js"
 
 function DashSidebar() {
     const { currentUser } = useSelector((state) => state.user);
@@ -38,11 +38,10 @@ function DashSidebar() {
             const data = await res.json();
             if(res.ok){
                 navigate('/login');
-                dispatch(logoutSuccess);
-                // alert(data)
+                dispatch(logoutSuccess());
             }
         } catch (error) {
-            console.log(error)
+            dispatch(logoutFailure(error))
         }
     }
     
@@ -55,14 +54,14 @@ function DashSidebar() {
                 Dashboard
                 </SidebarItem>
             </Link>
-            <Link to={'/dashboard?tab=addTransaction'}>
-                <SidebarItem icon={HiPlusCircle} as={"div"} active={tab === "addTransaction"}>
-                    Add Transaction
-                </SidebarItem>
-            </Link>
             <Link to={'/dashboard?tab=allTransactions'}>
                 <SidebarItem icon={HiOutlineCollection} as={"div"} active={tab === "allTransactions"}>
                     All Transactions
+                </SidebarItem>
+            </Link>
+            <Link to={'/dashboard?tab=addTransaction'}>
+                <SidebarItem icon={HiPlusCircle} as={"div"} active={tab === "addTransaction"}>
+                    Add Transaction
                 </SidebarItem>
             </Link>
             <Link to={'/dashboard?tab=analytics'}>

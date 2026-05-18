@@ -1,5 +1,5 @@
 
-import { Alert, Badge, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button, Pagination, Modal, ModalHeader, ModalBody } from "flowbite-react";
+import { Alert, Badge, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button, Pagination, Modal, ModalHeader, ModalBody, Spinner } from "flowbite-react";
 import {Link} from "react-router-dom"
 import { useEffect, useState } from "react";
 import { AiFillDelete } from "react-icons/ai"
@@ -108,8 +108,8 @@ const handleDelete = async ()=>{
 
 if(loading){
 return (
-  <div className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-    Loading...
+  <div className="min-h-screen flex justify-center items-center">
+    <Spinner size='xl' /> 
   </div>
 );
 }

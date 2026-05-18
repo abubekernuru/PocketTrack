@@ -1,5 +1,5 @@
 
-import { Alert, Badge, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button, Modal, ModalHeader, ModalBody } from "flowbite-react";
+import { Alert, Badge, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button, Modal, ModalHeader, ModalBody, Spinner } from "flowbite-react";
 import {Link} from "react-router-dom"
 import { useEffect, useState } from "react";
 import { AiFillDelete } from "react-icons/ai"
@@ -80,6 +80,9 @@ function DashUsers() {
     console.log(error)
     }
   }
+  if (loading) {
+      return   <div className="min-h-screen flex justify-center items-center"><Spinner size='xl' /></div>
+    }
 
   return (
     <div className="overflow-x-auto">

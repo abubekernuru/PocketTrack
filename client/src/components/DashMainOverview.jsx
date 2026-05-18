@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import DashboardSummaryCards from './dashboard/DashboardSummaryCards';
 import DashboardOverviewChart from './dashboard/DashboardOverviewChart';
 import DashboardCategoryChart from './dashboard/DashboardCategoryChart';
+import { Spinner } from 'flowbite-react';
 
 
 function DashMainOverview() {
@@ -58,7 +59,7 @@ const categoryData = catSummary.map((item)=>({
 
   
   if (loading) {
-    return <div>Loading...</div>;
+    return   <div className="min-h-screen flex justify-center items-center"><Spinner size='xl' /></div>
   }
 
   if (error) {
