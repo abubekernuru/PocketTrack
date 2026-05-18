@@ -1,10 +1,11 @@
-import { Alert, Button, Card, Label, Spinner, TextInput } from "flowbite-react";
+import { Alert, Button, Card, Label, Modal, ModalBody, ModalHeader, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateUserStart, updateSuccess, updateFailure } from "../redux/user/user.slice";
+import { updateUserStart, updateSuccess, updateFailure, deleteUserFailure, deleteUserSuccess } from "../redux/user/user.slice";
 import { useRef } from "react";
 import {logoutSuccess} from "../redux/user/user.slice.js"
 import { useNavigate } from "react-router-dom";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 
 function DashProfile() {
@@ -12,6 +13,7 @@ function DashProfile() {
   const {loading, error, currentUser} = useSelector((state)=>state.user);
   const [updateSuccessMsg, setUpdateSuccessMsg] = useState(null)
   const [imageUploading, setImageUploading] = useState(false)
+  const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const imageFileRef = useRef();
   const navigate = useNavigate();
@@ -100,6 +102,22 @@ function DashProfile() {
           console.log(error)
       }
   }
+  const handleDeleteUser = async ()=>{
+    try {
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: 'DELETE',
+      })
+      const data = await res.json();
+      if(!res.ok){
+        setShowModal(false);
+        dispatch(deleteUserFailure(data.message))
+      }
+      dispatch(deleteUserSuccess(data))
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message))
+    }
+  }
+
   return (
     <div className="" >
         <Card className="max-w-lg mx-auto ">
@@ -189,10 +207,31 @@ function DashProfile() {
             )}
           </form>
           <div className="flex justify-between items-center mt-2 pt-4 border-t border-gray-200 dark:border-gray-600">
-            <Button color={'red'} outline className="cursor-pointer">Delete Account</Button>
+            <Button color={'red'} outline className="cursor-pointer" onClick={()=>setShowModal(true)}>Delete Account</Button>
             <Button onClick={handleLogout} color={'gray'} className="cursor-pointer">Log Out</Button>
           </div>
         </Card>
+          {showModal && (
+          <Modal show={showModal} size="md" onClose={() => setShowModal(false)} popup>
+            <ModalHeader />
+            <ModalBody>
+              <div className="text-center">
+                <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                  Are you sure you want to delete this transaction?
+                </h3>
+                <div className="flex justify-center gap-4">
+                  <Button color="red" onClick={handleDeleteUser} className="cursor-pointer">
+                    Yes, I'm sure
+                  </Button>
+                  <Button color="alternative" onClick={() => setShowModal(false)} className="cursor-pointer">
+                    No, cancel
+                  </Button>
+                </div>
+              </div>
+            </ModalBody>
+          </Modal>
+        )}
       </div>
   );
 }
