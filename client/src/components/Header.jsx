@@ -54,7 +54,7 @@ export function Header() {
         }
     }
 return (
-    <Navbar fluid rounded className="border-b border-gray-200 dark:border-gray-700">
+    <Navbar fluid rounded className="border-b border-gray-200 dark:border-gray-700 px-4 sm:py-3 py-2">
         <NavbarBrand href="/">
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500 mr-2.5">
                 <HiChartPie className="text-white text-lg" />
@@ -75,9 +75,12 @@ return (
         <Button className="lg:hidden p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" color='gray' pill >
             <AiOutlineSearch className="text-lg" />
         </Button>
-        <Button onClick={() => dispatch(toggleTheme())} color="gray" pill className="cursor-pointer">
-            {theme === 'dark' ? <FaSun /> : <FaMoon />}
-        </Button>
+        <div
+            onClick={() => dispatch(toggleTheme())}
+            className="p-2 rounded-full cursor-pointer text-gray-500 dark:text-yellow-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        >
+            {theme === 'dark' ? <FaSun className="text-lg" /> : <FaMoon className="text-lg" />}
+        </div>
         { currentUser && 
         <Dropdown
             arrowIcon={false}
@@ -119,49 +122,6 @@ return (
 
 export default Header
 
-
-// import {
-//   Avatar, Dropdown, DropdownDivider, DropdownHeader, DropdownItem,
-//   Navbar, NavbarBrand, NavbarCollapse, NavbarLink, NavbarToggle, TextInput,
-/* } from "flowbite-react";
-import { AiOutlineSearch } from "react-icons/ai";
-import { HiChartPie } from "react-icons/hi";
-import { useSelector, useDispatch } from "react-redux";
-import { toggleTheme } from "../redux/theme/themeSlice";
-import { FaMoon, FaSun } from "react-icons/fa";
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { logoutFailure, logoutSuccess } from "../redux/user/user.slice";
-import { useNavigate } from "react-router-dom"; */
-
-// export function Header() {
-//   const apiUrl = import.meta.env.VITE_API_URL;
-//   const { currentUser } = useSelector((state) => state.user);
-//   const { theme } = useSelector((state) => state.theme);
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     document.documentElement.classList.toggle('dark', theme === 'dark');
-//   }, [theme]);
-
-//   const handleLogout = async () => {
-//     try {
-//       const res = await fetch(`${apiUrl}/api/auth/logout`, {
-//         method: 'POST',
-//         credentials: 'include',
-//       });
-//       const data = await res.json();
-//       if (!res.ok) {
-//         dispatch(logoutFailure(data.message));
-//         return;
-//       }
-//       dispatch(logoutSuccess());
-//       navigate('/login');
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
 
 //   return (
 //     <Navbar fluid className="border-b border-gray-200 dark:border-gray-700 px-4 py-2.5">
