@@ -191,8 +191,8 @@ function DashProfile() {
             <Button
               type="submit"
               disabled={loading}
-              color="blue"
-              className="mt-2 font-semibold rounded-lg transition duration-200 cursor-pointer"
+              className="mt-2 font-semibold rounded-lg transition duration-200 cursor-pointer bg-green-600 hover:bg-green-700"
+              color={"success"}
             >
               { loading ? 
                 <>

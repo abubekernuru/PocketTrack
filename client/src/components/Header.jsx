@@ -86,8 +86,13 @@ return (
             arrowIcon={false}
             inline
             label={
-            <Avatar className="cursor-pointer" alt="User settings" img={currentUser.profilePicture} rounded />
-            }
+                <Avatar 
+                    alt="User settings" 
+                    img={currentUser.profilePicture} 
+                    rounded 
+                    size="md"
+                    className="cursor-pointer border-2 border-transparent hover:border-green-500 rounded-full dark:hover:border-green-400 transition-all duration-200"
+                />}
         >            
         <DropdownHeader>
             {/* to do change username into first and lastname */}         
