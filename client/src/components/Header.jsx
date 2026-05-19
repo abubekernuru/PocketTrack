@@ -71,10 +71,10 @@ return (
             sizing="sm"
             />
         </form>
-        <Button className='w-12 h-10 lg:hidden' color='gray' pill >
+    <div className="flex md:order-2 gap-2">
+        <Button className="lg:hidden p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" color='gray' pill >
             <AiOutlineSearch />
         </Button>
-    <div className="flex md:order-2 gap-2">
         <Button onClick={() => dispatch(toggleTheme())} color="gray" pill className="cursor-pointer">
             {theme === 'dark' ? <FaSun /> : <FaMoon />}
         </Button>
