@@ -15,7 +15,9 @@ function DashAnalytics() {
     const fetchMonthlySummary = async ()=>{
       try {
         setLoading(true);
-        const res = await fetch(`/api/v1/analytics/monthly-summary?monthLimit=${monthLimit}`);
+        const res = await fetch(`/api/v1/analytics/monthly-summary?monthLimit=${monthLimit}`,{
+          credentials: 'include'
+        });
         const data = await res.json();
         if(!res.ok){
           setError(data.message);

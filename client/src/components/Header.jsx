@@ -37,7 +37,8 @@ export function Header() {
     const handleLogout = async ()=> {
         try {
             const res = await fetch(`/api/user/logout`,{
-                method:'POST'
+                method:'POST',
+                credentials: 'include'
             })
             const data = await res.json();
             if(!res.ok){
@@ -102,9 +103,6 @@ return (
         <NavbarLink href="/about">About</NavbarLink>
         {!currentUser && 
         <NavbarLink href="/login">Sign in</NavbarLink>
-        }
-        {currentUser && 
-        <NavbarLink href="/dashboard?tab=dashboard">Dashboard</NavbarLink>
         }
     </NavbarCollapse>
     </Navbar>

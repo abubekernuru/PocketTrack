@@ -15,23 +15,23 @@ function DashUsers() {
   const [loading, setLoading] = useState(false);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [userId, setUserId] = useState()
+  const [userId, setUserId] = useState(null)
 
   useEffect(()=>{
     const fetchuserss = async ()=>{
       try {
         setLoading(true);
         setUsersError(null);
-        const res = await fetch('/api/user', {
-          method: 'GET',
+        const res = await fetch(`/api/user`, {
+          credentials: 'include',
         })
         const data = await res.json();
         if(!res.ok){
           setUsersError(data.message);          
           return;
         }
-          setUsers(data);
-          if(data.length < 9){
+          setUsers(data.users);
+          if(data.users && data.users.length < 9){
             setShowMore(false);
           }
       } catch (error) {
@@ -47,16 +47,17 @@ function DashUsers() {
   const handleShowMore = async ()=>{
     try {
       const startIndex = users.length;
-    const res = await fetch(`/api/v1/transactions?startIndex=${startIndex}`, {
-      method: 'GET',
+      const res = await fetch(`/api/user?startIndex=${startIndex}`, {
+        method: 'GET',
           headers:{
             'Content-Type': 'application/json',
-          }
+          },
+          credentials: 'include',
     })
     const data = await res.json();
     if(res.ok){
-      setUsers((prev)=>[...prev, ...data.transactions])
-      if(data.transactions.length < 9){
+      setUsers((prev)=>[...prev, ...data.users])
+      if(data.users.length < 9){
         setShowMore(false);
       }
     }
@@ -66,10 +67,12 @@ function DashUsers() {
 }
 
   const handleDeleteUser = async ()=>{
+    if(!userId) return;
     try {
       setShowModal(false)
       const res = await fetch(`/api/user/delete/${userId}`, {
         method: 'DELETE',
+        credentials: 'include'
       })
       const data = await res.json();
       if(res.ok){
@@ -77,7 +80,9 @@ function DashUsers() {
       setUsers((prev)=>prev.filter((user)=>user._id !== userId))
       }
     } catch (error) {
-    console.log(error)
+      setUsersError(error.message); 
+    } finally{
+      setShowModal(false);
     }
   }
   if (loading) {
@@ -90,8 +95,8 @@ function DashUsers() {
         <TableHead>
           <TableRow>
             <TableHeadCell>Date Created</TableHeadCell>
-            <TableHeadCell>Users Image</TableHeadCell>
-            <TableHeadCell>Usersname</TableHeadCell>
+            <TableHeadCell>User Image</TableHeadCell>
+            <TableHeadCell>Username</TableHeadCell>
             <TableHeadCell>Email</TableHeadCell>
             <TableHeadCell>Admin</TableHeadCell>
             <TableHeadCell>Delete</TableHeadCell>
@@ -99,11 +104,11 @@ function DashUsers() {
         </TableHead>
         
         <TableBody className="divide-y">
-          {users && users.map((user)=>(
+          {users && users.length > 0 ? users.map((user)=>(
           <TableRow key={user._id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+            
             <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-
-                  {user.createdAt.split("T")[0]}
+                  {user.createdAt ? user.createdAt.split("T")[0] : 'N/A'}
             </TableCell>
             <TableCell >
               <img
@@ -120,9 +125,20 @@ function DashUsers() {
                   <AiFillDelete color="red" />
                 </span>
             </TableCell>
-          </TableRow>))}
+          </TableRow>)):(
+            <TableRow>
+              <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                No users found
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
+      {usersError && (
+          <Alert color="failure" className="mb-4" onDismiss={() => setUsersError(null)}>
+              {usersError}
+          </Alert>
+      )}
       {showMore && (
         <div className="flex justify-center w-full py-5">
           <button onClick={handleShowMore} className="px-6 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 cursor-pointer"

@@ -15,7 +15,9 @@ function DashMainOverview() {
     const fetchSummary = async()=>{
       try {
         setLoading(true);
-        const res = await fetch('/api/v1/analytics/summary');
+        const res = await fetch(`/api/v1/analytics/summary`,{
+          credentials: 'include'
+        });
         const data = await res.json();
         if(!res.ok){
           setError(data.message);
@@ -37,7 +39,9 @@ function DashMainOverview() {
   useEffect(()=>{
     const fetchCategorySummary = async ()=>{
       try {
-        const res = await fetch(`/api/v1/analytics/by-category`);
+        const res = await fetch(`/api/v1/analytics/by-category`,{
+          credentials: 'include'
+        });
         const data = await res.json();
 
         if(!res.ok){

@@ -23,6 +23,7 @@ function DashGetTransactions() {
         setTrxnError(null);
         const res = await fetch('/api/v1/transactions', {
           method: 'GET',
+          credentials: 'include',
           headers:{
             'Content-Type': 'application/json',
           }
@@ -74,6 +75,7 @@ const getCategoryColor = (category) => {
       const startIndex = trxn.length;
     const res = await fetch(`/api/v1/transactions?startIndex=${startIndex}`, {
       method: 'GET',
+      credentials: 'include',
           headers:{
             'Content-Type': 'application/json',
           }
@@ -94,7 +96,8 @@ const handleDelete = async ()=>{
   try {
     setShowModal(false)
     const res = await fetch(`/api/v1/transactions/delete/${trxnId}`, {
-      method:'DELETE'
+      method:'DELETE',
+      credentials: 'include'
     });
     const data = await res.json();
     if(res.ok){

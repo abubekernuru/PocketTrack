@@ -6,6 +6,9 @@ const bcryptjs = require("bcryptjs");
 const updateUser = async (req, res, next)=>{
     try {
         const {userId} = req.params;
+        if (!userId) {
+            return next(new ErrorHandler("User ID is required!", 400));
+        }
         if(userId !== req.user.id){
             return next(new ErrorHandler("You are not allowed to update this user!", 401));
         }
@@ -15,14 +18,24 @@ const updateUser = async (req, res, next)=>{
             }
             req.body.password = bcryptjs.hashSync(req.body.password, 10)
         }
-        const update = await User.findByIdAndUpdate(userId, {
-            $set:{
-                username: req.body.username,
-                email: req.body.email,
-                profilePicture: req.body.profilePicture,
-                password: req.body.password,
-            }
-        }, {new: true});
+
+        const updateFields = {
+            username: req.body.username,
+            email: req.body.email,
+            profilePicture: req.body.profilePicture,
+        };
+
+        if (req.body.password) {
+            updateFields.password = req.body.password;
+        }
+        const update = await User.findByIdAndUpdate(
+            userId,
+            { $set: updateFields }, 
+            {new: true, runValidators: true });
+
+        if (!update) {
+            return next(new ErrorHandler("User not found!", 404));
+        }
         const {password: pass, ...rest} = update._doc;
         res.status(200).json(rest)
     } catch (error) {
@@ -32,10 +45,15 @@ const updateUser = async (req, res, next)=>{
 
 const deleteUser = async (req, res, next)=> {
     try {
-        const {userId} = req.params;
-        if(req.user.id !== userId && !req.user.isAdmin){
-            return next(new ErrorHandler("You are not allowed to update this user!", 401));
+
+        const { userId } = req.params;
+        if (!userId) {
+            return next(new ErrorHandler("User ID is required!", 400));
         }
+        if(req.user.id !== userId && !req.user.isAdmin){
+            return next(new ErrorHandler("You are not allowed to delete this user!", 401));
+        }
+
         await User.findByIdAndDelete(userId);
         if (req.user.id === userId) {
             res.clearCookie("access_token");
@@ -57,12 +75,26 @@ const logoutUser = async (req, res, next)=> {
 
 const getUsers = async (req, res, next)=> {
     try {
-        const user = await User.findById(req.user.id);
-        if(!user || !user.isAdmin){
-            return next(new ErrorHandler("You are not allowed to see users data!", 403))
+        if (!req.user.isAdmin) {
+            return next(new ErrorHandler("You are not allowed to see users data!", 403));
         }
-        const allUsers = await User.find();
-        res.status(200).json(allUsers)
+        const startIndex = parseInt(req.query.startIndex) || 0;
+        const limit = parseInt(req.query.limit) || 9;
+        const sortDirection = req.query.order === "asc" ?1: -1;
+
+        const users = await User.find()
+        .sort({createdAt: sortDirection})
+        .skip(startIndex)
+        .limit(limit);
+
+        const totalUsers = await User.countDocuments()
+
+        const usersWithoutPw = users.map((user)=>{
+            const {password, ...rest} = user._doc;
+            return rest;
+        })
+
+        res.status(200).json({users: usersWithoutPw, totalUsers})
     } catch (error) {
         next(error)
     }

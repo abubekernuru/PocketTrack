@@ -26,7 +26,9 @@ function UpdateTransaction() {
     const fetchTrxn = async ()=>{
       try {
         setLoading(true);
-        const res = await fetch(`/api/v1/transactions?trxnId=${trxnId}`);
+        const res = await fetch(`/api/v1/transactions?trxnId=${trxnId}`,{
+          credentials: 'include'
+        });
         const data = await res.json();
 
         if(!res.ok){
@@ -61,6 +63,7 @@ function UpdateTransaction() {
           headers: {
             'Content-Type': 'application/json'
           },
+          credentials: 'include',
           body: JSON.stringify(formData)
       });
       const data = await res.json();
@@ -89,7 +92,8 @@ function UpdateTransaction() {
     setShowModal(false)
     setDeleteLoading(true)
     const res = await fetch(`/api/v1/transactions/delete/${trxnId}`, {
-      method:'DELETE'
+      method:'DELETE',
+      credentials: 'include'
     });
     const data = await res.json();
     if(res.ok){

@@ -63,6 +63,7 @@ function DashProfile() {
       dispatch(updateUserStart())
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -90,7 +91,8 @@ function DashProfile() {
   const handleLogout = async ()=> {
       try {
           const res = await fetch(`/api/user/logout`,{
-              method:'POST'
+              method:'POST',
+              credentials: 'include'
           })
           const data = await res.json();
           if(res.ok){
@@ -106,6 +108,7 @@ function DashProfile() {
     try {
       const res = await fetch(`/api/user/delete/${currentUser._id}`, {
         method: 'DELETE',
+        credentials: 'include'
       })
       const data = await res.json();
       if(!res.ok){

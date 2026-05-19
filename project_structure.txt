@@ -1,0 +1,12 @@
+
+C:\Users\TECTRON\OneDrive\Desktop\PocketTrack
+├── client
+├── ideas.txt
+├── project_structure.txt
+└── server
+
+directory: 2 file: 2
+
+
+
+[2K[1G
