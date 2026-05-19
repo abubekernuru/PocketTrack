@@ -4,3 +4,7 @@
 
 -update the style of showmore button in transaction page of the dashboard
 -the input field for add transaction in one day should include adding other category in similar day and put the total of all categories in to the database
+
+what the project is?
+
+I built Clarity, a modern MERN stack personal finance management application designed to help users track income and expenses, understand spending habits, and gain better financial awareness through interactive analytics and dashboards. Starting from authentication and protected routes, I developed a complete system with transaction management, categorized expense tracking, pagination tables, monthly summaries, profile management with Cloudinary image uploads, admin user management, and advanced analytics using charts and MongoDB aggregation pipelines. As I progressed, I also began thinking like an industry-level developer by separating components, improving dashboard architecture, and focusing on scalability, clean UI/UX, and reusable code structures. The motivation behind the project was not only to solve the real-world problem of manually tracking finances, but also to challenge myself with building a portfolio-grade full stack SaaS-style application that strengthens my practical MERN stack development skills.

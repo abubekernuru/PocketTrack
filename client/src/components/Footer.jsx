@@ -22,7 +22,7 @@ function FooterComp() {
             <FooterBrand
               href="https://flowbite.com"
               src="https://res.cloudinary.com/dv8q3oyfj/image/upload/v1777146224/ucecxrro0w61uvzwflhi.png"
-              alt="Pocket track Logo"
+              alt="Clarity logo"
               name="Pocket Tracker"
             />
           </div>
@@ -30,7 +30,7 @@ function FooterComp() {
             <div>
               <FooterTitle title="about" />
               <FooterLinkGroup col>
-                <FooterLink href="#">PocketTrack</FooterLink>
+                <FooterLink href="/">Clarity</FooterLink>
                 <FooterLink href="/about">About</FooterLink>
               </FooterLinkGroup>
             </div>
