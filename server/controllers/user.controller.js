@@ -55,8 +55,13 @@ const deleteUser = async (req, res, next)=> {
         }
 
         await User.findByIdAndDelete(userId);
+        const cookieOptions = {
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            secure: process.env.NODE_ENV === 'production' ? true : false,
+        };
         if (req.user.id === userId) {
-            res.clearCookie("access_token");
+            res.clearCookie("access_token", cookieOptions);
         }
         res.status(200).json("User deleted succefully!")
     } catch (error) {
@@ -66,7 +71,12 @@ const deleteUser = async (req, res, next)=> {
 
 const logoutUser = async (req, res, next)=> {
     try {
-        res.clearCookie("access_token");
+        const cookieOptions = {
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            secure: process.env.NODE_ENV === 'production' ? true : false,
+        };
+        res.clearCookie("access_token", cookieOptions);
         res.status(200).json("User logged out succefully!")
     } catch (error) {
         next(error)

@@ -4,6 +4,7 @@ import { HiCalendar, HiCurrencyDollar, HiOutlineExclamationCircle } from "react-
 import { useParams, useNavigate } from "react-router-dom";
 
 function UpdateTransaction() {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({})
   const [trxnUpdateError, setTrxUpdateError] = useState(null);
   const [trxnUpdateSucess, setTrxUpdateSucess] = useState(null);
@@ -26,7 +27,7 @@ function UpdateTransaction() {
     const fetchTrxn = async ()=>{
       try {
         setLoading(true);
-        const res = await fetch(`/api/v1/transactions?trxnId=${trxnId}`,{
+        const res = await fetch(`${apiUrl}/api/v1/transactions?trxnId=${trxnId}`,{
           credentials: 'include'
         });
         const data = await res.json();
@@ -58,7 +59,7 @@ function UpdateTransaction() {
     try {
       setSaveLoading(true);
       setTrxUpdateError(null);
-      const res = await fetch(`/api/v1/transactions/update/${trxnId}`, {
+      const res = await fetch(`${apiUrl}/api/v1/transactions/update/${trxnId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -91,7 +92,7 @@ function UpdateTransaction() {
   try {
     setShowModal(false)
     setDeleteLoading(true)
-    const res = await fetch(`/api/v1/transactions/delete/${trxnId}`, {
+    const res = await fetch(`${apiUrl}/api/v1/transactions/delete/${trxnId}`, {
       method:'DELETE',
       credentials: 'include'
     });

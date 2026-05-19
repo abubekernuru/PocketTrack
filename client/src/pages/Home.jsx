@@ -177,7 +177,7 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-gray-200 dark:border-gray-700 py-8">
+      {/* <footer className="border-t border-gray-200 dark:border-gray-700 py-8">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h3 className="text-2xl font-bold mb-2">
             Maal Tracker
@@ -187,7 +187,7 @@ export default function Home() {
             Smart expense tracking for a better financial future.
           </p>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }

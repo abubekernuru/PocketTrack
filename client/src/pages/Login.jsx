@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { signInStart, signInSuccess, signInFailure } from "../redux/user/user.slice";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function Login() {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
@@ -18,8 +20,9 @@ function Login() {
     e.preventDefault();
     try {
       dispatch(signInStart())
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(`${apiUrl}/api/auth/login`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },

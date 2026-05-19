@@ -9,6 +9,7 @@ import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 
 function DashProfile() {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({});
   const {loading, error, currentUser} = useSelector((state)=>state.user);
   const [updateSuccessMsg, setUpdateSuccessMsg] = useState(null)
@@ -61,7 +62,7 @@ function DashProfile() {
     }
     try {
       dispatch(updateUserStart())
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+      const res = await fetch(`${apiUrl}/api/user/update/${currentUser._id}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -90,7 +91,7 @@ function DashProfile() {
     }
   const handleLogout = async ()=> {
       try {
-          const res = await fetch(`/api/user/logout`,{
+            const res = await fetch(`${apiUrl}/api/user/logout`,{
               method:'POST',
               credentials: 'include'
           })
@@ -106,7 +107,7 @@ function DashProfile() {
   }
   const handleDeleteUser = async ()=>{
     try {
-      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+      const res = await fetch(`${apiUrl}/api/user/delete/${currentUser._id}`, {
         method: 'DELETE',
         credentials: 'include'
       })

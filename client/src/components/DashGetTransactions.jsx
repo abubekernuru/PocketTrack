@@ -9,6 +9,8 @@ import { HiOutlineExclamationCircle, HiOutlineSearch } from "react-icons/hi";
 
 function DashGetTransactions() {
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const [trxn, setTrxn] = useState([]);
   const [trxnError, setTrxnError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -21,12 +23,9 @@ function DashGetTransactions() {
       try {
         setLoading(true);
         setTrxnError(null);
-        const res = await fetch('/api/v1/transactions', {
+        const res = await fetch(`${apiUrl}/api/v1/transactions`, {
           method: 'GET',
           credentials: 'include',
-          headers:{
-            'Content-Type': 'application/json',
-          }
         })
         const data = await res.json();
         if(!res.ok){
@@ -73,7 +72,7 @@ const getCategoryColor = (category) => {
   const handleShowMore = async ()=>{
     try {
       const startIndex = trxn.length;
-    const res = await fetch(`/api/v1/transactions?startIndex=${startIndex}`, {
+    const res = await fetch(`${apiUrl}/api/v1/transactions?startIndex=${startIndex}`, {
       method: 'GET',
       credentials: 'include',
           headers:{
@@ -95,7 +94,7 @@ const getCategoryColor = (category) => {
 const handleDelete = async ()=>{
   try {
     setShowModal(false)
-    const res = await fetch(`/api/v1/transactions/delete/${trxnId}`, {
+    const res = await fetch(`${apiUrl}/api/v1/transactions/delete/${trxnId}`, {
       method:'DELETE',
       credentials: 'include'
     });

@@ -1,14 +1,16 @@
 
-import { Alert, Badge, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button, Modal, ModalHeader, ModalBody, Spinner } from "flowbite-react";
-import {Link} from "react-router-dom"
+import { Alert, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Button, Modal, ModalHeader, ModalBody, Spinner } from "flowbite-react";
+
 import { useEffect, useState } from "react";
 import { AiFillDelete } from "react-icons/ai"
 import { FaTimes, FaCheck } from 'react-icons/fa';
 
 
-import { HiOutlineExclamationCircle, HiOutlineSearch } from "react-icons/hi";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 function DashUsers() {
+
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const [users, setUsers] = useState([]);
   const [usersError, setUsersError] = useState(null);
@@ -22,7 +24,7 @@ function DashUsers() {
       try {
         setLoading(true);
         setUsersError(null);
-        const res = await fetch(`/api/user`, {
+        const res = await fetch(`${apiUrl}/api/user`, {
           credentials: 'include',
         })
         const data = await res.json();
@@ -47,7 +49,7 @@ function DashUsers() {
   const handleShowMore = async ()=>{
     try {
       const startIndex = users.length;
-      const res = await fetch(`/api/user?startIndex=${startIndex}`, {
+      const res = await fetch(`${apiUrl}/api/user?startIndex=${startIndex}`, {
         method: 'GET',
           headers:{
             'Content-Type': 'application/json',
@@ -70,7 +72,7 @@ function DashUsers() {
     if(!userId) return;
     try {
       setShowModal(false)
-      const res = await fetch(`/api/user/delete/${userId}`, {
+      const res = await fetch(`${apiUrl}/api/user/delete/${userId}`, {
         method: 'DELETE',
         credentials: 'include'
       })

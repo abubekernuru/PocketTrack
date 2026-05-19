@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Button, Radio, Label, Select, Textarea, TextInput, Card, Alert, Spinner } from "flowbite-react";
 import { HiCalendar, HiCurrencyDollar } from "react-icons/hi";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function DashAddTransaction() {
   const [formData, setFormData] = useState({
     type: "expense", // default
@@ -30,7 +32,7 @@ function DashAddTransaction() {
     try {
       setLoading(true);
       setTrxAddError(null);
-      const res = await fetch("/api/v1/transactions", {
+      const res = await fetch(`${apiUrl}/api/v1/transactions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

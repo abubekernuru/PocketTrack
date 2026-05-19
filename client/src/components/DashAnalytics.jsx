@@ -7,6 +7,7 @@ import {
 import {Card, Dropdown, DropdownItem, Spinner} from 'flowbite-react'
 
 function DashAnalytics() {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [monthlySummary, setMonthlySummary]= useState([]);
   const [monthLimit, setMonthLimit]= useState(6);
   const [loading, setLoading] = useState(false)
@@ -15,7 +16,7 @@ function DashAnalytics() {
     const fetchMonthlySummary = async ()=>{
       try {
         setLoading(true);
-        const res = await fetch(`/api/v1/analytics/monthly-summary?monthLimit=${monthLimit}`,{
+        const res = await fetch(`${apiUrl}/api/v1/analytics/monthly-summary?monthLimit=${monthLimit}`,{
           credentials: 'include'
         });
         const data = await res.json();

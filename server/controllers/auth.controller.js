@@ -38,9 +38,15 @@ const login = async (req, res, next) => {
         if(!isMatch){
             return next(new ErrorHandler("Invalid credentials", 401))
         }
-        const token = jwt.sign({id: user._id, username: user.username, isAdmin: user.isAdmin}, process.env.JWT_SECRET, {expiresIn: '7d'});
+        const token = jwt.sign({id: user._id, username: user.username, isAdmin: user.isAdmin}, process.env.JWT_SECRET, {expiresIn: '30d'});
         const {password: pw, ...rest} = user._doc;
-        res.status(200).cookie('access_token', token, {httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000}).json(rest)
+                const cookieOptions = {
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            secure: process.env.NODE_ENV === 'production'
+        };
+        res.status(200).cookie('access_token', token, cookieOptions).json(rest)
     } catch (error) {
         next(error)
     }

@@ -4,10 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { signInStart, signInSuccess, signInFailure } from "../redux/user/user.slice";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function Register() {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
-  const {loading, error, currentUser} = useSelector((state)=>state.user);
+  const {loading, error} = useSelector((state)=>state.user);
   const dispatch = useDispatch();
 
 
@@ -18,7 +20,7 @@ function Register() {
     e.preventDefault();
     try {
       dispatch(signInStart())
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch(`${apiUrl}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

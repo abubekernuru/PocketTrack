@@ -4,8 +4,10 @@ import DashboardOverviewChart from './dashboard/DashboardOverviewChart';
 import DashboardCategoryChart from './dashboard/DashboardCategoryChart';
 import { Spinner } from 'flowbite-react';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 
 function DashMainOverview() {
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [summary, setSummary] = useState({})
@@ -15,7 +17,7 @@ function DashMainOverview() {
     const fetchSummary = async()=>{
       try {
         setLoading(true);
-        const res = await fetch(`/api/v1/analytics/summary`,{
+        const res = await fetch(`${apiUrl}/api/v1/analytics/summary`,{
           credentials: 'include'
         });
         const data = await res.json();
@@ -39,7 +41,7 @@ function DashMainOverview() {
   useEffect(()=>{
     const fetchCategorySummary = async ()=>{
       try {
-        const res = await fetch(`/api/v1/analytics/by-category`,{
+        const res = await fetch(`${apiUrl}/api/v1/analytics/by-category`,{
           credentials: 'include'
         });
         const data = await res.json();

@@ -14,6 +14,8 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {logoutFailure, logoutSuccess} from "../redux/user/user.slice.js"
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function DashSidebar() {
     const { currentUser } = useSelector((state) => state.user);
 
@@ -32,7 +34,7 @@ function DashSidebar() {
 
     const handleLogout = async ()=> {
         try {
-            const res = await fetch(`/api/user/logout`,{
+            const res = await fetch(`${apiUrl}/api/user/logout`,{
                 method:'POST',
                 credentials: 'include'
             })

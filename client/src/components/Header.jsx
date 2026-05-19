@@ -22,6 +22,7 @@ import { logoutFailure, logoutSuccess } from "../redux/user/user.slice";
 import { useNavigate } from "react-router-dom";
 
 export function Header() {
+    const apiUrl = import.meta.env.VITE_API_URL;
     const {error, loading, currentUser} = useSelector((state)=>state.user);
     const { theme } = useSelector((state) => state.theme);
     const dispatch = useDispatch();
@@ -36,7 +37,7 @@ export function Header() {
 
     const handleLogout = async ()=> {
         try {
-            const res = await fetch(`/api/user/logout`,{
+            const res = await fetch(`${apiUrl}/api/user/logout`,{
                 method:'POST',
                 credentials: 'include'
             })
