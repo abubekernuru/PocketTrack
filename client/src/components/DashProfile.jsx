@@ -20,7 +20,7 @@ function DashProfile() {
   const navigate = useNavigate();
 
   /* cloudinary credentials */
-  const cloudName = "dv8q3oyfj";
+  const cloudName = import.meta.env.VITE_Cloudinary_Cloud_Name;
   const uploadPreset = "profile_preset_2";
   const handleImageUpload = async (e)=>{
     try {
