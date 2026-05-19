@@ -63,13 +63,13 @@ return (
                 Clar<span className="text-blue-500">ity</span>
             </span>
         </NavbarBrand>
-        <form>
-        <TextInput
-            type='text'
-            placeholder='Search...'
+        <form className="hidden lg:block">
+            <TextInput
+            type="text"
+            placeholder="Search..."
             rightIcon={AiOutlineSearch}
-            className='hidden lg:inline'
-        />
+            sizing="sm"
+            />
         </form>
         <Button className='w-12 h-10 lg:hidden' color='gray' pill >
             <AiOutlineSearch />
