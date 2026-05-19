@@ -1,15 +1,11 @@
-import { Card, Badge } from "flowbite-react";
+import { Badge } from "flowbite-react";
 import {
-  HiOutlineCash,
-  HiOutlineChartPie,
-  HiOutlineTrendingUp,
   HiOutlineShieldCheck,
   HiOutlineDatabase,
   HiOutlineCode,
   HiOutlineLightningBolt,
   HiOutlineCheckCircle,
   HiOutlineEye,
-  HiOutlineUsers,
   HiOutlineSparkles,
   HiOutlineHeart,
 } from "react-icons/hi";
@@ -27,7 +23,7 @@ export default function About() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white">
       {/* HERO SECTION - matching home page style */}
-      <section className="max-w-7xl mx-auto px-4 py-24 flex flex-col items-center text-center">
+      <section className="max-w-7xl mx-auto px-4 py-16 flex flex-col items-center text-center">
         <Badge color="success" className="inline-flex mb-5 px-4 py-1 text-sm font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
           About Clarity
         </Badge>
@@ -45,7 +41,7 @@ export default function About() {
       </section>
 
       {/* WHY THIS APP WAS BUILT - matching feature card style */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
+      <section className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 hover:shadow-md transition-shadow">
           <div className="flex items-center gap-3 mb-4">
             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-100 dark:bg-green-900">
@@ -63,12 +59,12 @@ export default function About() {
       </section>
 
       {/* MISSION SECTION - with icon styling matching home page */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 mx-auto mb-6">
+      <section className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 mx-auto mb-4">
             <HiOutlineEye className="text-3xl text-green-600 dark:text-green-400" />
           </div>
-          <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
+          <h2 className="text-3xl font-bold mb-3">Our Mission</h2>
           <p className="text-gray-600 dark:text-gray-400 text-lg max-w-3xl mx-auto leading-relaxed">
             To democratize financial intelligence and help everyone — regardless of financial literacy level — 
             understand and improve their spending habits through accessible, modern technology.
@@ -77,9 +73,9 @@ export default function About() {
       </section>
 
       {/* TECH STACK - matching home page feature cards */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-3">Built With Modern Technology</h2>
+      <section className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-2">Built With Modern Technology</h2>
           <p className="text-gray-600 dark:text-gray-400">
             Enterprise-grade stack for reliability and performance
           </p>
@@ -121,9 +117,9 @@ export default function About() {
       </section>
 
       {/* CORE FEATURES - matching home page list style */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-3">What You Can Do With Clarity</h2>
+      <section className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-2">What You Can Do With Clarity</h2>
           <p className="text-gray-600 dark:text-gray-400">
             Everything you need to take control of your personal finances
           </p>
@@ -140,8 +136,8 @@ export default function About() {
       </section>
 
       {/* STATS SECTION - matching home page social proof */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
-        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-12 text-center">
+      <section className="max-w-7xl mx-auto px-4 py-8">
+        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-10 text-center">
           <div className="flex flex-wrap justify-center gap-6 sm:gap-12">
             <div className="text-center">
               <div className="text-3xl font-bold text-white">2,400+</div>
@@ -162,12 +158,12 @@ export default function About() {
       </section>
 
       {/* VISION SECTION - matching CTA style from home page */}
-      <section className="max-w-7xl mx-auto px-4 pb-20">
-        <div className="bg-gradient-to-r from-green-600 to-teal-600 rounded-2xl p-12 text-center">
-          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mx-auto mb-6">
+      <section className="max-w-7xl mx-auto px-4 pb-16">
+        <div className="bg-gradient-to-r from-green-600 to-teal-600 rounded-2xl p-10 text-center">
+          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mx-auto mb-4">
             <HiOutlineSparkles className="text-3xl text-white" />
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
             Our Vision
           </h2>
           <p className="text-white text-lg leading-relaxed max-w-3xl mx-auto">
