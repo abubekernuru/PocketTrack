@@ -12,7 +12,7 @@ const addTransaction = async (req, res, next) => {
         if (!["income", "expense"].includes(type)) {
             return next(new ErrorHandler("Invalid transaction type", 400));
         }
-        if (!["food", "transport", "entertainment","salary","utilities","healthCare","beauty","familyandpersonal", "houserent","other"].includes(category)) {
+        if (!["food", "transport", "entertainment","salary","utilities","healthCare", "unlimited-data", "airtime/data","beauty","familyandpersonal", "houserent","other"].includes(category)) {
             return next(new ErrorHandler("Invalid transaction category", 400));
         }
         const newTransaction = new Transaction({
