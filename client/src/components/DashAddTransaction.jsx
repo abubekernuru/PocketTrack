@@ -140,6 +140,8 @@ function DashAddTransaction() {
                   <option value="salary">Salary</option>
                   <option value="utilities">Utilities</option>
                   <option value="houserent">Rent</option>
+                  <option value="unlimited-data">Unlimited data</option>
+                  <option value="airtime/data">Airtime/Data</option>
                   <option value="beauty">Beauty</option>
                   <option value="other">Other</option>
                 </Select>
