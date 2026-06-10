@@ -3,7 +3,18 @@ import { Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recha
 
 function DashboardCategoryChart({categoryData}) {
     // pie chart colors
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+    const COLORS = [             
+        '#639922',
+        '#378ADD',
+        '#7F77DD',
+        '#1D9E75',
+        '#EF9F27',
+        '#888780',
+        '#D4537E',
+        '#D85A30',
+        '#993556',
+        '#B4B2A9',
+    ];
 
 return (
     <Card className="mt-6">
