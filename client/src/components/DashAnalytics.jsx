@@ -122,14 +122,12 @@ function DashAnalytics() {
 
   // Financial Metric KPIs Matrix Engine
   const metrics = useMemo(() => {
-    // Standardize baseline values if data streams are empty
     const currentMonthTrend = monthlySummary[monthlySummary.length - 1] || {};
     const totalIncome = currentMonthTrend.totalIncome || 0;
     const currentExpenses = currentMonthTrend.totalExpense || totalExpense;
 
     const savingsRate = totalIncome > 0 ? ((totalIncome - currentExpenses) / totalIncome) * 100 : 0;
     
-    // Smooth daily distribution velocity calculation
     const daysInMonth = new Date(year, month, 0).getDate();
     const averageDailyExpense = currentExpenses / (daysInMonth || 30);
 
@@ -144,6 +142,9 @@ function DashAnalytics() {
     const currentYear = new Date().getFullYear();
     return Array.from({ length: 5 }, (_, i) => currentYear - i);
   }, []);
+
+  // Global indicator checking if either framework data fetch is unresolved
+  const isAnyLoading = chartLoading || categoryLoading;
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto p-4 md:p-6 lg:p-8 text-gray-900 dark:text-gray-100 transition-colors duration-200">
@@ -186,39 +187,52 @@ function DashAnalytics() {
 
       {/* 2. HIGH IMPACT KPI SUMMARY METRIC MATRIX */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* KPI 1: Net Margin Savings Efficiency Indicator */}
-        <Card className="shadow-sm border-gray-100 dark:border-gray-800">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Savings Rate</p>
-          <h3 className="mt-2 text-2xl font-bold tracking-tight">{metrics.savingsRate}%</h3>
-          <p className="text-xs text-gray-500 mt-1">Of baseline dynamic monthly inflow</p>
-        </Card>
+        {isAnyLoading ? (
+          // Metric Cards Shimmer Skeleton Block Loading Layouts
+          [1, 2, 3, 4].map((loaderId) => (
+            <Card key={loaderId} className="shadow-sm border-none bg-gray-50 dark:bg-gray-800/50 animate-pulse">
+              <div className="w-1/2 h-3 bg-gray-200 dark:bg-gray-700 rounded mb-3" />
+              <div className="w-3/4 h-7 bg-gray-300 dark:bg-gray-600 rounded mb-2" />
+              <div className="w-2/3 h-2.5 bg-gray-200 dark:bg-gray-700 rounded" />
+            </Card>
+          ))
+        ) : (
+          <>
+            {/* KPI 1: Net Margin Savings Efficiency Indicator */}
+            <Card className="shadow-sm border-gray-100 dark:border-gray-800">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Savings Rate</p>
+              <h3 className="mt-2 text-2xl font-bold tracking-tight">{metrics.savingsRate}%</h3>
+              <p className="text-xs text-gray-500 mt-1">Of baseline dynamic monthly inflow</p>
+            </Card>
 
-        {/* KPI 2: Velocity Run Burn Velocity */}
-        <Card className="shadow-sm border-gray-100 dark:border-gray-800">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Daily Expense Rate</p>
-          <h3 className="mt-2 text-2xl font-bold tracking-tight">{formatCurrency(metrics.averageDailyExpense)}</h3>
-          <p className="text-xs text-gray-500 mt-1">Smoothed across asset time limits</p>
-        </Card>
+            {/* KPI 2: Velocity Run Burn Velocity */}
+            <Card className="shadow-sm border-gray-100 dark:border-gray-800">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Daily Expense Rate</p>
+              <h3 className="mt-2 text-2xl font-bold tracking-tight">{formatCurrency(metrics.averageDailyExpense)}</h3>
+              <p className="text-xs text-gray-500 mt-1">Smoothed across asset time limits</p>
+            </Card>
 
-        {/* KPI 3: Outlier Center Monitor */}
-        <Card className="shadow-sm border-gray-100 dark:border-gray-800">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Top Spend Sector</p>
-          <h3 className="mt-2 text-2xl font-bold capitalize tracking-tight truncate">
-            {topCategory?._id || "No Outflows"}
-          </h3>
-          <p className="text-xs text-rose-500 font-medium mt-1">
-            {topCategory ? `${formatCurrency(topCategory.totalExpense)} spent` : "Clear index"}
-          </p>
-        </Card>
+            {/* KPI 3: Outlier Center Monitor */}
+            <Card className="shadow-sm border-gray-100 dark:border-gray-800">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Top Spend Sector</p>
+              <h3 className="mt-2 text-2xl font-bold capitalize tracking-tight truncate">
+                {topCategory?._id || "No Outflows"}
+              </h3>
+              <p className="text-xs text-rose-500 font-medium mt-1">
+                {topCategory ? `${formatCurrency(topCategory.totalExpense)} spent` : "Clear index"}
+              </p>
+            </Card>
 
-        {/* KPI 4: Absolute Runway Velocity */}
-        <Card className="shadow-sm border-gray-100 dark:border-gray-800">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Net Month Delta</p>
-          <h3 className={`mt-2 text-2xl font-bold tracking-tight ${metrics.netBalance >= 0 ? "text-green-500" : "text-rose-500"}`}>
-            {formatCurrency(metrics.netBalance)}
-          </h3>
-          <p className="text-xs text-gray-500 mt-1">Net operational balance value</p>
-        </Card>
+            {/* KPI 4: Absolute Runway Velocity */}
+            <Card className="shadow-sm border-gray-100 dark:border-gray-800">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Net Month Delta</p>
+              <h3 className={`mt-2 text-2xl font-bold tracking-tight ${metrics.netBalance >= 0 ? "text-green-500" : "text-rose-500"}`}>
+                {formatCurrency(metrics.netBalance)}
+              </h3>
+              <p className="text-xs text-gray-500 mt-1">Net operational balance value</p>
+            </Card>
+          </>
+        )}
       </div>
 
       {/* 3. BUSINESS CORE METRIC GRID ENGINE CONTAINER */}
@@ -233,7 +247,10 @@ function DashAnalytics() {
             </div>
 
             {chartLoading ? (
-              <div className="flex justify-center items-center h-80"><Spinner size="xl" /></div>
+              <div className="flex flex-col justify-center items-center h-80 gap-3">
+                <Spinner size="xl" />
+                <p className="text-xs text-gray-400 animate-pulse">Syncing timeline indices...</p>
+              </div>
             ) : chartError ? (
               <div className="flex justify-center items-center h-80 text-sm text-red-500">{chartError}</div>
             ) : chartData.length === 0 ? (
@@ -276,9 +293,17 @@ function DashAnalytics() {
 
             {categoryLoading ? (
               <div className="space-y-4 animate-pulse mt-6">
-                <div className="h-32 mx-auto w-32 rounded-full bg-gray-200 dark:bg-gray-700" />
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-8 bg-gray-200 dark:bg-gray-700 rounded" />
+                <div className="h-36 mx-auto w-36 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                  <Spinner size="md" />
+                </div>
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="space-y-2 mt-2">
+                    <div className="flex justify-between">
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
+                    </div>
+                    <div className="h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full w-full" />
+                  </div>
                 ))}
               </div>
             ) : categoryError ? (
