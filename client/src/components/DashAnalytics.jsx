@@ -128,13 +128,26 @@ function DashAnalytics() {
 
     const savingsRate = totalIncome > 0 ? ((totalIncome - currentExpenses) / totalIncome) * 100 : 0;
     
-    const daysInMonth = new Date(year, month, 0).getDate();
-    const averageDailyExpense = currentExpenses / (daysInMonth || 30);
+    // Chronological Evaluation Framework
+    const today = new Date();
+    const isCurrentRealMonth = today.getFullYear() === year && (today.getMonth() + 1) === month;
+    
+    // Dynamic operational divisor calculation
+    let targetDaysCount;
+    if (isCurrentRealMonth) {
+      targetDaysCount = today.getDate(); // Divide solely by exact days elapsed so far
+    } else {
+      targetDaysCount = new Date(year, month, 0).getDate(); // Standard full calendar fallback
+    }
+
+    const averageDailyExpense = currentExpenses / (targetDaysCount || 1);
 
     return {
       savingsRate: savingsRate.toFixed(1),
       averageDailyExpense,
       netBalance: currentMonthTrend.balance || 0,
+      daysEvaluated: targetDaysCount,
+      isLiveMonth: isCurrentRealMonth
     };
   }, [monthlySummary, totalExpense, month, year]);
 
@@ -143,7 +156,6 @@ function DashAnalytics() {
     return Array.from({ length: 5 }, (_, i) => currentYear - i);
   }, []);
 
-  // Global indicator checking if either framework data fetch is unresolved
   const isAnyLoading = chartLoading || categoryLoading;
 
   return (
@@ -188,7 +200,6 @@ function DashAnalytics() {
       {/* 2. HIGH IMPACT KPI SUMMARY METRIC MATRIX */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {isAnyLoading ? (
-          // Metric Cards Shimmer Skeleton Block Loading Layouts
           [1, 2, 3, 4].map((loaderId) => (
             <Card key={loaderId} className="shadow-sm border-none bg-gray-50 dark:bg-gray-800/50 animate-pulse">
               <div className="w-1/2 h-3 bg-gray-200 dark:bg-gray-700 rounded mb-3" />
@@ -209,7 +220,9 @@ function DashAnalytics() {
             <Card className="shadow-sm border-gray-100 dark:border-gray-800">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Daily Expense Rate</p>
               <h3 className="mt-2 text-2xl font-bold tracking-tight">{formatCurrency(metrics.averageDailyExpense)}</h3>
-              <p className="text-xs text-gray-500 mt-1">Smoothed across asset time limits</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Averaged over {metrics.daysEvaluated} recorded days {metrics.isLiveMonth && "(MTD)"}
+              </p>
             </Card>
 
             {/* KPI 3: Outlier Center Monitor */}
