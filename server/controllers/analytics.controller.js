@@ -95,6 +95,50 @@ const getMonthlySummary = async (req, res, next)=>{
     }
 }
 
+const getMonthlyCategorySummary = async (req, res, next)=>{
+    try {
+        const month = Number(req.query.month);
+        const year = Number(req.query.year);
+        if (!month || !year || isNaN(month) || isNaN(year)) {
+            return res.status(400).json({ message: 'month and year query params are required' });
+        }
+        const result = await Transaction.aggregate([
+            {
+                $match: {
+                    userId: new mongoose.Types.ObjectId(req.user.id),
+                    type: "expense"
+                }
+            },
+            {
+                $addFields: {
+                    month: {$month: "$date"},
+                    year: {$year: "$date"},
+                }
+            },
+            {
+                $match: {
+                    month,
+                    year
+                }
+            },
+            {
+                $group: {
+                    _id: "$category",
+                    totalExpense: {$sum: "$amount"}
+                }
+            },
+            {
+                $sort: {
+                    totalExpense: -1
+                }
+            }
+        ])
+        res.status(200).json(result);
+    } catch (error) {
+        next(error)
+    }
+}
 
 
-module.exports = {getSummary, getCategorySummary, getMonthlySummary}
+
+module.exports = {getSummary, getCategorySummary, getMonthlySummary, getMonthlyCategorySummary}
