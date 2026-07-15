@@ -20,11 +20,11 @@ function FooterComp() {
           {/* BRAND — matches header logo exactly */}
           <div className="mb-6 sm:mb-0">
             <a href="/" className="flex items-center gap-2.5 mb-3">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-green-600 dark:bg-green-400">
                 <HiChartPie className="text-white text-lg" />
               </div>
               <span className="text-xl font-semibold text-gray-800 dark:text-white">
-                Clar<span className="text-blue-500">ity</span>
+                Clar<span className="text-green-600 dark:text-green-400">ity</span>
               </span>
             </a>
             <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">

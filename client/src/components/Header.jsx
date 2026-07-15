@@ -56,11 +56,11 @@ export function Header() {
 return (
     <Navbar fluid rounded className="border-b border-gray-200 dark:border-gray-700 px-4 py-2.5">
         <NavbarBrand href="/">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500 mr-2.5">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-green-600 dark:bg-green-400 mr-2.5">
                 <HiChartPie className="text-white text-lg" />
             </div>
             <span className="text-xl font-semibold text-gray-800 dark:text-white">
-                Clar<span className="text-blue-500">ity</span>
+                Clar<span className="text-green-600 dark:text-green-400">ity</span>
             </span>
         </NavbarBrand>
         <form className="hidden lg:block">

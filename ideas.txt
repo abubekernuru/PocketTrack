@@ -13,3 +13,7 @@ I built Clarity, a modern MERN stack personal finance management application des
 add feature:
     - see daily expenses for each month with symbolizing the category
     - summarize the average daily expense for each category in each month.
+
+    - change the dashboard, analytics etc menu in mobile size it should be at the bottom
+    - display the total amount of daily expense/income for each day with filter for each month and year
+    - improve ui of the add transaction page
