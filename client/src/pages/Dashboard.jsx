@@ -27,7 +27,7 @@ function Dashboard() {
   return (
     <div className='flex flex-col md:flex-row dark:bg-gray-900 min-h-screen pb-20 md:pb-0'>
       {/* Sidebar - Fixed width on medium+ screens */}
-      <main className="md:w-64 border-r dark:border-gray-700">
+      <main className="hidden md:block md:w-64 border-r dark:border-gray-700">
         <DashSidebar />
       </main>
 

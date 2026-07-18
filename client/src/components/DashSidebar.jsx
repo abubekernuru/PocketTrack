@@ -15,15 +15,15 @@ import {logoutFailure, logoutSuccess} from "../redux/user/user.slice.js"
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-function DashSidebar() {
+function DashSidebar({ mobileOnly = false }) {
     const { currentUser } = useSelector((state) => state.user);
 
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-  const urlParams = new URLSearchParams(location.search);
-  const tab = urlParams.get('tab') || 'dashboard';
+    const urlParams = new URLSearchParams(location.search);
+    const tab = urlParams.get('tab') || 'dashboard';
 
     const handleLogout = async ()=> {
         try {
@@ -39,7 +39,7 @@ function DashSidebar() {
                 dispatch(logoutFailure(data.message))
             }
         } catch (error) {
-            dispatch(logoutFailure(error))
+            dispatch(logoutFailure(error.message))
         }
     }
     
@@ -49,34 +49,97 @@ function DashSidebar() {
     {
         tab: "dashboard",
         label: "Dashboard",
+        path: "/dashboard?tab=dashboard",
+        showInMobile: true,
+        showInDesktop: true,
         icon: HiChartBar
     },
     {
         tab: "allTransactions",
         label: "Transactions",
+        path: "/dashboard?tab=allTransactions",
+        showInMobile: true,
+        showInDesktop: true,
         icon: HiOutlineCollection
     },
     {
         tab: "addTransaction",
-        label: "Add Transaction",
+        label: "Add",
+        path: "/dashboard?tab=addTransaction",
+        showInMobile: true,
+        showInDesktop: true,
         icon: HiPlusCircle
     },
     {
         tab: "analytics",
         label: "Analytics",
+        path: "/dashboard?tab=analytics",
+        showInMobile: true,
+        showInDesktop: true,
         icon: HiOutlineChartPie
     },
     {
         tab: "profile",
         label: "Profile",
+        path: "/dashboard?tab=profile",
+        showInMobile: true,
+        showInDesktop: true,
         icon: HiUser
     },
     // Admin-only — filtered below
     ...(currentUser?.isAdmin
-        ? [{ tab: "users", label: "Users", icon: HiOutlineUserGroup }]
+        ? [{ tab: "users", label: "Users", path: "/dashboard?tab=users",roles: ["admin"], showInMobile: false,
+        showInDesktop: true, icon: HiOutlineUserGroup }]
         : []),
 ]
     
+    if (mobileOnly) {
+    return (
+        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 safe-area-pb">
+        <div className="flex items-center justify-around h-16">
+            {navItems
+                .filter(item => item.showInMobile)
+                .filter(item =>
+                    !item.roles ||
+                    item.roles.includes(currentUser.role)
+                )
+                .map(({ tab: t, label, icon: Icon, path }) => {
+            const isActive = tab === t;
+            return (
+                <Link
+                key={t}
+                to={path}
+                className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 group relative"
+                aria-label={label}
+                >
+                <Icon
+                    className={`text-xl transition-colors duration-150 ${
+                    isActive
+                        ? "text-blue-600 dark:text-blue-400"
+                        : "text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300"
+                    }`}
+                />
+                <span
+                    className={`text-[10px] font-medium leading-none transition-colors duration-150 ${
+                    isActive
+                        ? "text-blue-600 dark:text-blue-400"
+                        : "text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300"
+                    }`}
+                >
+                    {label}
+                </span>
+                {/* CHANGE: Active indicator dot above the icon */}
+                {isActive && (
+                    <span className="absolute top-0 h-0.5 w-8 rounded-full bg-blue-600 dark:bg-blue-400 -translate-y-0" />
+                )}
+                </Link>
+            );
+            })}
+        </div>
+        </nav>
+    );
+    }
+
     return (
     <Sidebar aria-label="Sidebar" className='w-full md:w-63.9'>
         <SidebarItems>
@@ -106,8 +169,14 @@ function DashSidebar() {
                     Profile
                 </SidebarItem>
             </Link> */}
-            {navItems.map(({ tab: t, label, icon }) => (
-                <Link key={t} to={`/dashboard?tab=${t}`}>
+            {navItems
+                .filter(item => item.showInDesktop)
+                .filter(item =>
+                    !item.roles ||
+                    item.roles.includes(currentUser.role)
+                )
+                .map(({ tab: t, label, icon, path }) => (
+                <Link key={t} to={path}>
                     <SidebarItem icon={icon} as={"div"} active={tab === t} 
                     // Admin badge on Profile item
                     {...(t === "profile" && {

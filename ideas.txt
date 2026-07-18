@@ -18,6 +18,8 @@ add feature:
     - display the total amount of daily expense/income for each day with filter for each month and year
     - improve ui of the add transaction page
 
+    -when changing url show top
+
 
     Re study dashboard page and dashsidebar
 
