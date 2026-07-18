@@ -17,3 +17,8 @@ add feature:
     - change the dashboard, analytics etc menu in mobile size it should be at the bottom
     - display the total amount of daily expense/income for each day with filter for each month and year
     - improve ui of the add transaction page
+
+
+    Re study dashboard page and dashsidebar
+
+    mentor and teacher and I'm am a junior mern stack web developer am building a personal finance expense tracker that I used for 2 months and I updated some features it's very simple now but I want to make it sass product in the future by solving real problem and now I'm back building it after a long break so help me by explaining  the code as simple as possible way, clearly, easily , step by step, beginner friendly give me a code lines with explanations and professional industry standard ways if that's 
