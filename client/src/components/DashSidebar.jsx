@@ -86,6 +86,14 @@ function DashSidebar({ mobileOnly = false }) {
         showInDesktop: true,
         icon: HiUser
     },
+    {
+        tab: "users",
+        label: "Users",
+        path: "/dashboard?tab=users",
+        showInMobile: false,
+        showInDesktop: true,
+        icon: HiOutlineUserGroup
+    },
     // Admin-only — filtered below
     ...(currentUser?.isAdmin
         ? [{ tab: "users", label: "Users", path: "/dashboard?tab=users",roles: ["admin"], showInMobile: false,
