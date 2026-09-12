@@ -6,21 +6,65 @@ const mongoose = require("mongoose");
 const addTransaction = async (req, res, next) => {
     try {
         const {type, amount, category, description, date} = req.body;
-        if (!type || !amount) {
-            return next(new ErrorHandler("Type and amount are required", 400));
+
+        // validate required fields
+
+        if (!type) {
+            return next(new ErrorHandler("Transaction type is required", 400));
         }
-        if (!["income", "expense"].includes(type)) {
+        if ( amount === undefined || amount === null || amount === "") {
+            return next(new ErrorHandler("Transaction amount is required", 400));
+        }
+        if (!category) {
+            return next(new ErrorHandler("Transaction category is required", 400));
+        }
+
+        // validate transaction type and category
+
+        const allowedTypes = ["income", "expense"];
+        if (!allowedTypes.includes(type)) {
             return next(new ErrorHandler("Invalid transaction type", 400));
         }
-        if (!["food", "transport", "entertainment","salary","utilities","healthCare", "unlimited-data", "airtime/data","beauty","familyandpersonal", "houserent","other"].includes(category)) {
+        const allowedCategories = ["food", "transport", "entertainment","salary","utilities","healthCare", "unlimited-data", "airtime/data","beauty","familyandpersonal", "houserent","other"];
+
+        if (!allowedCategories.includes(category)) {
             return next(new ErrorHandler("Invalid transaction category", 400));
         }
+
+        // validate amount
+
+        const numericAmount = Number(amount);
+        if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+            return next(new ErrorHandler("Transaction amount must be a positive number", 400));
+        }
+
+        // validate description
+
+        const cleanDescription = typeof description === "string" ? description.trim() : "";
+        if (cleanDescription.length > 500){
+            return next(
+                new ErrorHandler( "Description cannot exceed 500 characters", 400)
+            )
+        }
+
+        // validate date
+
+        let transactionDate;
+        if (date) {
+            transactionDate = new Date(date);
+            if (isNaN(transactionDate)) {
+                return next(new ErrorHandler("Invalid transaction date", 400));
+            }
+        } else {
+            transactionDate = new Date();
+        }
+
         const newTransaction = new Transaction({
             type,
-            amount,
+            amount: numericAmount,
             category,
-            description,
-            date,
+            description: cleanDescription,
+            date: transactionDate,
             userId: req.user.id
         });
         await newTransaction.save();
