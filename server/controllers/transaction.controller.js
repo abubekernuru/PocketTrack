@@ -78,29 +78,116 @@ const addTransaction = async (req, res, next) => {
     }
 }
 
-const getTransactions = async(req, res, next)=>{
-    try {
-        const startIndex = parseInt(req.query.startIndex) || 0;
-        const limit = parseInt(req.query.limit) || 9;
-        const sortDirection = req.query.order === "asc" ? 1 : -1;
-        
-        const transactions = await Transaction.find({
-            userId: req.user.id,
-            ...(req.query.type && {type: req.query.type}),
-            ...(req.query.trxnId && {_id: req.query.trxnId}),
-            ...(req.query.category && {category: req.query.category}),
-        })
-        .sort({date: sortDirection})
-        .skip(startIndex)
-        .limit(limit);
+// const getTransactions = async(req, res, next)=>{
+//     try {
+//         const startIndex = parseInt(req.query.startIndex) || 0;
+//         const limit = parseInt(req.query.limit) || 9;
 
-        const totalTransaction = await Transaction.countDocuments({userId: req.user.id});
+//         const sortDirection = req.query.order === "asc" ? 1 : -1;
         
-        res.status(200).json({transactions, totalTransaction})
+//         const transactions = await Transaction.find({
+//             userId: req.user.id,
+//             ...(req.query.type && {type: req.query.type}),
+//             ...(req.query.trxnId && {_id: req.query.trxnId}),
+//             ...(req.query.category && {category: req.query.category}),
+//         })
+//         .sort({date: sortDirection})
+//         .skip(startIndex)
+//         .limit(limit);
+
+//         const totalTransaction = await Transaction.countDocuments({userId: req.user.id});
+        
+//         res.status(200).json({transactions, totalTransaction})
+//     } catch (error) {
+//         next(error)
+//     }
+// }
+
+
+const getTransactions = async (req, res, next) => {
+    try {
+        // 1. Parse and validate pagination parameters
+
+        const startIndex = Number.parseInt(req.query.startIndex, 10) || 0;
+        const requestedLimit = Number.parseInt(req.query.limit, 10) || 9;
+
+        if (startIndex < 0) {
+            return next(
+                new ErrorHandler(
+                    "startIndex cannot be negative",
+                    400
+                )
+            );
+        }
+
+        if (requestedLimit <= 0) {
+            return next(
+                new ErrorHandler(
+                    "limit must be greater than 0",
+                    400
+                )
+            );
+        }
+
+        // Prevent clients from requesting an excessive number
+        // of transactions in a single request.
+        const limit = Math.min(requestedLimit, 50);
+
+        // 2. Validate sort direction
+
+        const order = req.query.order || "desc";
+
+        if (!["asc", "desc"].includes(order)) {
+            return next(
+                new ErrorHandler(
+                    "Invalid sort order. Use asc or desc",
+                    400
+                )
+            );
+        }
+
+        const sortDirection = order === "asc" ? 1 : -1;
+
+        // 3. Build the transaction filter
+
+        const filter = {
+            userId: req.user.id,
+        };
+
+        if (req.query.type) {
+            filter.type = req.query.type;
+        }
+
+        if (req.query.category) {
+            filter.category = req.query.category;
+        }
+
+        if (req.query.trxnId) {
+            filter._id = req.query.trxnId;
+        }
+
+        // 4. Fetch transactions
+
+        const transactions = await Transaction.find(filter)
+            .sort({ date: sortDirection })
+            .skip(startIndex)
+            .limit(limit);
+
+        // 5. Count matching transactions
+
+        const totalTransaction =
+            await Transaction.countDocuments(filter);
+
+        res.status(200).json({
+            success: true,
+            transactions,
+            totalTransaction,
+        });
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
+
 
 const getSummary = async(req, res, next)=>{
     try {
