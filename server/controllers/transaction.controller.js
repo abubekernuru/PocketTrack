@@ -239,29 +239,225 @@ const getCategorySummary = async (req, res, next)=>{
     }
 }
 
-const updateTransaction = async (req, res, next)=>{
+// const updateTransaction = async (req, res, next)=>{
+//     try {
+//         const transaction = await Transaction.findById(req.params.trxnId);
+//         if(!transaction){
+//             return next(new ErrorHandler("Transaction not found.", 401))
+//         }
+//         if(!req.user.isAdmin && req.user.id !== transaction.userId.toString()){
+//             return next(new ErrorHandler("You are not allowed to update this transaction.", 401))
+//         }
+//         const updateTrxn = await Transaction.findByIdAndUpdate(req.params.trxnId, {
+//             $set:{
+//                 type: req.body.type,
+//                 amount: req.body.amount,
+//                 category: req.body.category,
+//                 description: req.body.description,
+//                 date: req.body.date
+//             }
+//         }, {new: true});
+//         res.status(200).json(updateTrxn);
+//     } catch (error) {
+//         next(error)
+//     }
+// }
+
+const updateTransaction = async (req, res, next) => {
     try {
-        const transaction = await Transaction.findById(req.params.trxnId);
-        if(!transaction){
-            return next(new ErrorHandler("Transaction not found.", 401))
+        const { trxnId } = req.params;
+
+        // 1. Validate transaction ID
+        if (!mongoose.Types.ObjectId.isValid(trxnId)) {
+            return next(
+                new ErrorHandler(
+                    "Invalid transaction ID",
+                    400
+                )
+            );
         }
-        if(!req.user.isAdmin && req.user.id !== transaction.userId.toString()){
-            return next(new ErrorHandler("You are not allowed to update this transaction.", 401))
+
+        const {
+            type,
+            amount,
+            category,
+            description,
+            date,
+        } = req.body;
+
+        // 2. Validate required fields
+
+        if (!type) {
+            return next(
+                new ErrorHandler(
+                    "Transaction type is required",
+                    400
+                )
+            );
         }
-        const updateTrxn = await Transaction.findByIdAndUpdate(req.params.trxnId, {
-            $set:{
-                type: req.body.type,
-                amount: req.body.amount,
-                category: req.body.category,
-                description: req.body.description,
-                date: req.body.date
+
+        if (amount === undefined || amount === null || amount === "") {
+            return next(
+                new ErrorHandler(
+                    "Transaction amount is required",
+                    400
+                )
+            );
+        }
+
+        if (!category) {
+            return next(
+                new ErrorHandler(
+                    "Transaction category is required",
+                    400
+                )
+            );
+        }
+
+        // --------------------------------------------------
+        // 3. Validate transaction type
+        // --------------------------------------------------
+
+        const allowedTypes = ["income", "expense"];
+
+        if (!allowedTypes.includes(type)) {
+            return next(
+                new ErrorHandler(
+                    "Invalid transaction type",
+                    400
+                )
+            );
+        }
+
+        // 4. Validate category
+
+        const allowedCategories = [
+            "food",
+            "transport",
+            "entertainment",
+            "salary",
+            "utilities",
+            "healthCare",
+            "beauty",
+            "familyandpersonal",
+            "houserent",
+            "unlimited-data",
+            "airtime/data",
+            "other",
+        ];
+
+        if (!allowedCategories.includes(category)) {
+            return next(
+                new ErrorHandler(
+                    "Invalid transaction category",
+                    400
+                )
+            );
+        }
+
+        // 5. Validate amount
+
+        const numericAmount = Number(amount);
+
+        if (
+            !Number.isFinite(numericAmount) ||
+            numericAmount <= 0
+        ) {
+            return next(
+                new ErrorHandler(
+                    "Transaction amount must be a positive number",
+                    400
+                )
+            );
+        }
+
+        // 6. Validate description
+
+        const cleanDescription =
+            typeof description === "string"
+                ? description.trim()
+                : "";
+
+        if (cleanDescription.length > 500) {
+            return next(
+                new ErrorHandler(
+                    "Description cannot exceed 500 characters",
+                    400
+                )
+            );
+        }
+
+        // 7. Validate date
+
+        let transactionDate;
+
+        if (date) {
+            transactionDate = new Date(date);
+
+            if (Number.isNaN(transactionDate.getTime())) {
+                return next(
+                    new ErrorHandler(
+                        "Invalid transaction date",
+                        400
+                    )
+                );
             }
-        }, {new: true});
-        res.status(200).json(updateTrxn);
+        } else {
+            transactionDate = new Date();
+        }
+
+        // 8. Build update data
+
+        const updateData = {
+            type,
+            amount: numericAmount,
+            category,
+            description: cleanDescription,
+            date: transactionDate,
+        };
+
+        // 9. Update only the authenticated user's transaction
+
+        const filter = {
+            _id: trxnId,
+            userId: req.user.id,
+        };
+
+        if (req.user.isAdmin) {
+            delete filter.userId;
+        }
+
+        const updatedTransaction =
+            await Transaction.findOneAndUpdate(
+                filter,
+                { $set: updateData },
+                {
+                    new: true,
+                    runValidators: true,
+                }
+            );
+        // 10. Transaction not found / not authorized
+
+        if (!updatedTransaction) {
+            return next(
+                new ErrorHandler(
+                    "Transaction not found or you are not allowed to update it",
+                    404
+                )
+            );
+        }
+
+        // 11. Return updated transaction
+
+        res.status(200).json({
+            success: true,
+            message: "Transaction updated successfully!",
+            transaction: updatedTransaction,
+        });
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
 const deleteTransaction = async (req, res, next)=>{
     try {

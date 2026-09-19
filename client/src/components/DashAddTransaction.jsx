@@ -34,7 +34,7 @@ function DashAddTransaction() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.amount) {
+    if (!formData.amount) {``
       setTrxAddError("Please enter an amount.");
       return;
     }
