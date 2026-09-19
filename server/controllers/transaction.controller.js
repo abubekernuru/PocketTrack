@@ -27,6 +27,7 @@ const addTransaction = async (req, res, next) => {
         }
         const allowedCategories = ["food", "transport", "entertainment","salary","utilities","healthCare", "unlimited-data", "airtime/data","beauty","familyandpersonal", "houserent","other"];
 
+
         if (!allowedCategories.includes(category)) {
             return next(new ErrorHandler("Invalid transaction category", 400));
         }
@@ -459,17 +460,63 @@ const updateTransaction = async (req, res, next) => {
     }
 };
 
+// const deleteTransaction = async (req, res, next)=>{
+//     try {
+//         const transaction = await Transaction.findById(req.params.trxnId);
+//         if(!transaction){
+//             return next(new ErrorHandler("Transaction not found.", 401))
+//         }
+//         if(!req.user.isAdmin && req.user.id !== transaction.userId.toString()){
+//             return next(new ErrorHandler("You are not allowed to delete this transaction.", 401))
+//         }
+//         await Transaction.findByIdAndDelete(req.params.trxnId);
+//         res.status(200).json({"message": "Transaction is deleted succesfully!"})
+//     } catch (error) {
+//         next(error)
+//     }
+// }
 const deleteTransaction = async (req, res, next)=>{
     try {
-        const transaction = await Transaction.findById(req.params.trxnId);
-        if(!transaction){
-            return next(new ErrorHandler("Transaction not found.", 401))
+        const { trxnId } = req.params;
+
+        // 1. Validate transaction ID
+        if (!mongoose.Types.ObjectId.isValid(trxnId)) {
+            return next(
+                new ErrorHandler(
+                    "Invalid transaction ID",
+                    400
+                )
+            );
         }
-        if(!req.user.isAdmin && req.user.id !== transaction.userId.toString()){
-            return next(new ErrorHandler("You are not allowed to delete this transaction.", 401))
+
+        // 2. Build Ownership aware filter
+        const filter = {
+            _id: trxnId,
+            userId: req.user.id,
+        };
+
+        if (req.user.isAdmin) {
+            delete filter.userId;           
         }
-        await Transaction.findByIdAndDelete(req.params.trxnId);
-        res.status(200).json({"message": "Transaction is deleted succesfully!"})
+
+        // 3. delete the transaction
+        const deletedTransaction = await Transaction.findOneAndDelete(filter);
+        // 4. Transaction not found / not authorized
+        if (!deletedTransaction) {
+            return next(
+                new ErrorHandler(
+                    "Transaction not found or you are not allowed to delete it",
+                    404
+                )
+            );
+        }
+
+        // 5. Return deleted transaction
+        res.status(200).json({
+            success: true,
+            message: "Transaction deleted successfully!",
+        }); 
+
     } catch (error) {
         next(error)
     }
