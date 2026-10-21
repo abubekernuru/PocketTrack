@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
 const cookieParser = require('cookie-parser');
-const cors = require('cors')
+const cors = require('cors');
+const errorMiddleware = require("./middleware/error.middleware");
 
 const app = express();
 
@@ -54,6 +55,16 @@ app.use('/api/v1/transactions', transactionRoute);
 app.use('/api/v1/analytics', analyticsRoute);
 
 
+// Handle requests to routes that do not exist
+app.use((req, res, next) => {
+    const error = new Error(
+        `Route not found: ${req.method} ${req.originalUrl}`
+    );
+
+    error.statusCode = 404;
+
+    next(error);
+});
 
 const PORT = process.env.PORT || 3000;
 mongoose.connect(process.env.MONGO_URL)
@@ -69,13 +80,15 @@ mongoose.connect(process.env.MONGO_URL)
 
   
 // error handler middleware
-app.use((err, req, res, next)=> {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal server error";
-  res.status(statusCode).json({
-    success: false,
-    message,
-    statusCode,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : null,
-  })
-})
+// app.use((err, req, res, next)=> {
+//   const statusCode = err.statusCode || 500;
+//   const message = err.message || "Internal server error";
+//   res.status(statusCode).json({
+//     success: false,
+//     message,
+//     statusCode,
+//     stack: process.env.NODE_ENV === 'development' ? err.stack : null,
+//   })
+// })
+
+app.use(errorMiddleware);
