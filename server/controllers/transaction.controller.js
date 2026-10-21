@@ -2,6 +2,11 @@ const Transaction = require("../model/transaction.model");
 const ErrorHandler = require("../utils/error");
 const mongoose = require("mongoose");
 
+const {
+    TRANSACTION_TYPES,
+    TRANSACTION_CATEGORIES,
+} = require("../constants/transaction.constants");
+
 
 const addTransaction = async (req, res, next) => {
     try {
@@ -21,11 +26,10 @@ const addTransaction = async (req, res, next) => {
 
         // validate transaction type and category
 
-        const allowedTypes = ["income", "expense"];
-        if (!allowedTypes.includes(type)) {
+        if (!TRANSACTION_TYPES.includes(type)) {
             return next(new ErrorHandler("Invalid transaction type", 400));
         }
-        const allowedCategories = ["food", "transport", "entertainment","salary","utilities","healthCare", "unlimited-data", "airtime/data","beauty","familyandpersonal", "houserent","other"];
+        const allowedCategories = TRANSACTION_CATEGORIES;
 
 
         if (!allowedCategories.includes(category)) {
@@ -108,31 +112,48 @@ const addTransaction = async (req, res, next) => {
 const getTransactions = async (req, res, next) => {
     try {
         // 1. Parse and validate pagination parameters
+        const startIndexParam = req.query.startIndex;
+        const limitParam = req.query.limit;
 
-        const startIndex = Number.parseInt(req.query.startIndex, 10) || 0;
-        const requestedLimit = Number.parseInt(req.query.limit, 10) || 9;
+        // Use defaults only when parameters are omitted
+        const startIndex =
+            startIndexParam === undefined ? 0 : Number(startIndexParam);
 
-        if (startIndex < 0) {
+        const requestedLimit =
+            limitParam === undefined ? 9 : Number(limitParam);
+
+        // Validate startIndex
+        if (
+            startIndexParam !== undefined &&
+            (
+                typeof startIndexParam !== "string" ||
+                !/^\d+$/.test(startIndexParam) ||
+                !Number.isSafeInteger(startIndex)
+            )
+        ) {
             return next(
-                new ErrorHandler(
-                    "startIndex cannot be negative",
-                    400
-                )
+                new ErrorHandler("startIndex must be a valid non-negative integer", 400)
             );
         }
 
-        if (requestedLimit <= 0) {
+        // Validate limit
+        if (
+            limitParam !== undefined &&
+            (
+                typeof limitParam !== "string" ||
+                !/^\d+$/.test(limitParam) ||
+                !Number.isSafeInteger(requestedLimit) ||
+                requestedLimit === 0
+            )
+        ) {
             return next(
-                new ErrorHandler(
-                    "limit must be greater than 0",
-                    400
-                )
+                new ErrorHandler("limit must be a valid positive integer", 400)
             );
         }
 
-        // Prevent clients from requesting an excessive number
-        // of transactions in a single request.
+        // Prevent excessively large database queries
         const limit = Math.min(requestedLimit, 50);
+
 
         // 2. Validate sort direction
 
@@ -149,32 +170,62 @@ const getTransactions = async (req, res, next) => {
 
         const sortDirection = order === "asc" ? 1 : -1;
 
-        // 3. Build the transaction filter
+
+        // 3. Validate optional filters
+
+        const { type, category, trxnId } = req.query;
+
+        if (type && !TRANSACTION_TYPES.includes(type)) {
+            return next(
+                new ErrorHandler("Invalid transaction type", 400)
+            );
+        }
+
+        if (
+            category &&
+            !TRANSACTION_CATEGORIES.includes(category)
+        ) {
+            return next(
+                new ErrorHandler("Invalid transaction category", 400)
+            );
+        }
+
+        if (
+            trxnId &&
+            !mongoose.Types.ObjectId.isValid(trxnId)
+        ) {
+            return next(
+                new ErrorHandler("Invalid transaction ID", 400)
+            );
+        }
+
+        // 4. Build one ownership-aware query filter
 
         const filter = {
             userId: req.user.id,
         };
 
-        if (req.query.type) {
-            filter.type = req.query.type;
+        if (type) {
+            filter.type = type;
         }
 
-        if (req.query.category) {
-            filter.category = req.query.category;
+        if (category) {
+            filter.category = category;
         }
 
-        if (req.query.trxnId) {
-            filter._id = req.query.trxnId;
+        if (trxnId) {
+            filter._id = trxnId;
         }
 
-        // 4. Fetch transactions
+
+        // 5. Fetch transactions
 
         const transactions = await Transaction.find(filter)
             .sort({ date: sortDirection })
             .skip(startIndex)
             .limit(limit);
 
-        // 5. Count matching transactions
+        // 6. Count matching transactions
 
         const totalTransaction =
             await Transaction.countDocuments(filter);
@@ -319,9 +370,7 @@ const updateTransaction = async (req, res, next) => {
         // 3. Validate transaction type
         // --------------------------------------------------
 
-        const allowedTypes = ["income", "expense"];
-
-        if (!allowedTypes.includes(type)) {
+        if (!TRANSACTION_TYPES.includes(type)) {
             return next(
                 new ErrorHandler(
                     "Invalid transaction type",
@@ -332,22 +381,8 @@ const updateTransaction = async (req, res, next) => {
 
         // 4. Validate category
 
-        const allowedCategories = [
-            "food",
-            "transport",
-            "entertainment",
-            "salary",
-            "utilities",
-            "healthCare",
-            "beauty",
-            "familyandpersonal",
-            "houserent",
-            "unlimited-data",
-            "airtime/data",
-            "other",
-        ];
 
-        if (!allowedCategories.includes(category)) {
+        if (!TRANSACTION_CATEGORIES.includes(category)) {
             return next(
                 new ErrorHandler(
                     "Invalid transaction category",

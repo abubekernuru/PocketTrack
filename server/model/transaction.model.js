@@ -34,7 +34,13 @@
 // module.exports = Transaction;
 
 
+
 const mongoose = require("mongoose");
+
+const {
+    TRANSACTION_TYPES,
+    TRANSACTION_CATEGORIES,
+} = require("../constants/transaction.constants");
 
 const transactionSchema = new mongoose.Schema(
     {
@@ -43,45 +49,28 @@ const transactionSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
-
         type: {
             type: String,
             enum: {
-                values: ["income", "expense"],
+                values: TRANSACTION_TYPES,
                 message: "Transaction type must be income or expense",
             },
             required: [true, "Transaction type is required"],
         },
-
         amount: {
             type: Number,
             required: [true, "Transaction amount is required"],
             min: [0.01, "Transaction amount must be greater than 0"],
         },
-
         category: {
             type: String,
             enum: {
-                values: [
-                    "food",
-                    "transport",
-                    "entertainment",
-                    "salary",
-                    "utilities",
-                    "healthCare",
-                    "beauty",
-                    "familyandpersonal",
-                    "houserent",
-                    "unlimited-data",
-                    "airtime/data",
-                    "other",
-                ],
+                values: TRANSACTION_CATEGORIES,
                 message: "Invalid transaction category",
             },
             required: [true, "Transaction category is required"],
             default: "other",
         },
-
         description: {
             type: String,
             trim: true,
@@ -90,17 +79,17 @@ const transactionSchema = new mongoose.Schema(
                 "Description cannot exceed 500 characters",
             ],
         },
-
         date: {
             type: Date,
             required: [true, "Transaction date is required"],
             default: Date.now,
         },
     },
-    {
-        timestamps: true,
-    }
+    { timestamps: true }
 );
+
+
+transactionSchema.index({ userId: 1, date: -1 });
 
 const Transaction = mongoose.model("Transaction", transactionSchema);
 
