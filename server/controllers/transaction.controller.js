@@ -199,6 +199,50 @@ const getTransactions = async (req, res, next) => {
             );
         }
 
+        // Validate optional date filters
+        const { startDate, endDate } = req.query;
+
+        const isValidDate = (value) => {
+            if (typeof value !== "string") return false;
+
+            // Require YYYY-MM-DD format
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                return false;
+            }
+
+            // Reject impossible dates, such as 2026-02-30
+            const date = new Date(`${value}T00:00:00.000Z`);
+
+            return (
+                !Number.isNaN(date.getTime()) &&
+                date.toISOString().slice(0, 10) === value
+            );
+        };
+
+        if (startDate && !isValidDate(startDate)) {
+            return next(
+                new ErrorHandler(
+                    "startDate must be a valid date in YYYY-MM-DD format",
+                    400
+                )
+            );
+        }
+
+        if (endDate && !isValidDate(endDate)) {
+            return next(
+                new ErrorHandler(
+                    "endDate must be a valid date in YYYY-MM-DD format",
+                    400
+                )
+            );
+        }
+
+        if (startDate && endDate && startDate > endDate) {
+            return next(
+                new ErrorHandler("startDate cannot be after endDate", 400)
+            );
+        }
+
         // 4. Build one ownership-aware query filter
 
         const filter = {
@@ -217,6 +261,27 @@ const getTransactions = async (req, res, next) => {
             filter._id = trxnId;
         }
 
+        // Apply date-range filtering
+        if (startDate || endDate) {
+            filter.date = {};
+
+            if (startDate) {
+                filter.date.$gte = new Date(
+                    `${startDate}T00:00:00.000Z`
+                );
+            }
+
+            if (endDate) {
+                // Exclusive next-day boundary includes the entire end date
+                const endExclusive = new Date(
+                    `${endDate}T00:00:00.000Z`
+                );
+
+                endExclusive.setUTCDate(endExclusive.getUTCDate() + 1);
+
+                filter.date.$lt = endExclusive;
+            }
+        }
 
         // 5. Fetch transactions
 
