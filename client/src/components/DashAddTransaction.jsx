@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Label, Select, Textarea, TextInput, Card, Alert, Spinner } from "flowbite-react";
 import { HiCalendar, HiCurrencyDollar, HiPlusCircle } from "react-icons/hi";
 
@@ -15,6 +15,7 @@ function DashAddTransaction() {
   const [trxnAddError, setTrxAddError] = useState(null);
   const [trxnAddSucess, setTrxAddSucess] = useState(null);
   const [loading, setLoading] = useState(false);
+  const submissionInProgress = useRef(false);
 
   useEffect(() => {
     if (trxnAddSucess) {
@@ -32,35 +33,67 @@ function DashAddTransaction() {
     setFormData((prev) => ({ ...prev, [id]: id === "amount" ? (value === "" ? "" : parseFloat(value)) : value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.amount) {``
-      setTrxAddError("Please enter an amount.");
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // Prevent a second request from starting immediately.
+  if (submissionInProgress.current) return;
+
+  // Validate the amount before sending the request.
+  const amount = Number(formData.amount);
+
+  if (
+    formData.amount === "" ||
+    !Number.isFinite(amount) ||
+    amount <= 0
+  ) {
+    setTrxAddError("Please enter a valid amount greater than zero.");
+    return;
+  }
+
+  // Set the guard synchronously before the first await.
+  submissionInProgress.current = true;
+
+  try {
+    setLoading(true);
+    setTrxAddError(null);
+    setTrxAddSucess(null);
+
+    const res = await fetch(`${apiUrl}/api/v1/transactions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        ...formData,
+        amount,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setTrxAddError(data.message || "Something went wrong");
       return;
     }
-    try {
-      setLoading(true);
-      setTrxAddError(null);
-      const res = await fetch(`${apiUrl}/api/v1/transactions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(formData)
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setTrxAddError(data.message || "Something went wrong");
-        setLoading(false);
-        return;
-      }
-      setTrxAddSucess("Transaction saved successfully!");
-      setFormData({ type: "expense", date: new Date().toISOString().split("T")[0], amount: "", category: "food", description: "" });
-    } catch (error) {
-      setTrxAddError(error.message || "Network error");
-    } finally {
-      setLoading(false);
-    }
-  };
+
+    setTrxAddSucess("Transaction saved successfully!");
+
+    setFormData({
+      type: "expense",
+      date: new Date().toISOString().split("T")[0],
+      amount: "",
+      category: "food",
+      description: "",
+    });
+  } catch (error) {
+    setTrxAddError(error.message || "Network error");
+  } finally {
+    submissionInProgress.current = false;
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="p-3 md:p-10 w-full flex">
