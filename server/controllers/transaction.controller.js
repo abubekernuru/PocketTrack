@@ -52,17 +52,41 @@ const addTransaction = async (req, res, next) => {
             )
         }
 
-        // validate date
 
+        // Validate transaction date
         let transactionDate;
-        if (date) {
-            transactionDate = new Date(date);
-            if (isNaN(transactionDate)) {
-                return next(new ErrorHandler("Invalid transaction date", 400));
+
+        if (date !== undefined && date !== null && date !== "") {
+            // Accept only YYYY-MM-DD strings
+            if (
+                typeof date !== "string" ||
+                !/^\d{4}-\d{2}-\d{2}$/.test(date)
+            ) {
+                return next(
+                    new ErrorHandler(
+                        "Date must use YYYY-MM-DD format",
+                        400
+                    )
+                );
             }
+
+            // Reject impossible dates, such as February 30
+            const parsedDate = new Date(`${date}T00:00:00.000Z`);
+
+            if (
+                Number.isNaN(parsedDate.getTime()) ||
+                parsedDate.toISOString().slice(0, 10) !== date
+            ) {
+                return next(
+                    new ErrorHandler("Invalid transaction date", 400)
+                );
+            }
+
+            transactionDate = parsedDate;
         } else {
             transactionDate = new Date();
         }
+
 
         const newTransaction = new Transaction({
             type,
