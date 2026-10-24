@@ -37,7 +37,7 @@ const allowedOrigins = rawOrigins
     return callback(new Error('Not allowed by CORS'));
   },
   methods: ['GET','POST','PUT','DELETE','PATCH','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key'],
   credentials: true
 }));
 
@@ -89,6 +89,6 @@ mongoose.connect(process.env.MONGO_URL)
 //     statusCode,
 //     stack: process.env.NODE_ENV === 'development' ? err.stack : null,
 //   })
-// })
+// }) 
 
 app.use(errorMiddleware);

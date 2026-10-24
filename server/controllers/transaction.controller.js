@@ -12,6 +12,23 @@ const addTransaction = async (req, res, next) => {
     try {
         const {type, amount, category, description, date} = req.body;
 
+        // Validate the presence of the Idempotency-Key header
+
+        const idempotencyKey = req.get("Idempotency-Key")?.trim();
+
+        const uuidPattern =
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+        if (!idempotencyKey || !uuidPattern.test(idempotencyKey)) {
+            return next(
+                new ErrorHandler(
+                    "A valid Idempotency-Key header is required",
+                    400
+                )
+            );
+        }
+
+
         // validate required fields
 
         if (!type) {
@@ -87,6 +104,19 @@ const addTransaction = async (req, res, next) => {
             transactionDate = new Date();
         }
 
+        // Check for an existing transaction with the same idempotency key
+        const existingTransaction = await Transaction.findOne({
+            userId: req.user.id,
+            idempotencyKey,
+        });
+
+        if (existingTransaction) {
+            return res.status(200).json({
+                success: true,
+                message: "Transaction was already created",
+                transaction: existingTransaction,
+            });
+        }
 
         const newTransaction = new Transaction({
             type,
@@ -94,7 +124,8 @@ const addTransaction = async (req, res, next) => {
             category,
             description: cleanDescription,
             date: transactionDate,
-            userId: req.user.id
+            userId: req.user.id,
+            idempotencyKey,
         });
         await newTransaction.save();
         res.status(201).json({
