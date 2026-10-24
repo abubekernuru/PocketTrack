@@ -49,12 +49,6 @@ const transactionSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
-        
-        idempotencyKey: {
-            type: String,
-            trim: true,
-            default: undefined,
-        },
         type: {
             type: String,
             enum: {

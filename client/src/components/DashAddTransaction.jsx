@@ -16,7 +16,6 @@ function DashAddTransaction() {
   const [trxnAddSucess, setTrxAddSucess] = useState(null);
   const [loading, setLoading] = useState(false);
   const submissionInProgress = useRef(false);
-  const idempotencyKeyRef = useRef(null);
 
   useEffect(() => {
     if (trxnAddSucess) {
@@ -45,10 +44,6 @@ const handleSubmit = async (e) => {
   // Validate the amount before sending the request.
   const amount = Number(formData.amount);
   
-  // Generate a unique idempotency key if it hasn't been generated yet.
-if (!idempotencyKeyRef.current) {
-idempotencyKeyRef.current = crypto.randomUUID();
-console.log("Idempotency key:", idempotencyKeyRef.current);
   if (
     formData.amount === "" ||
     !Number.isFinite(amount) ||
@@ -60,7 +55,6 @@ console.log("Idempotency key:", idempotencyKeyRef.current);
 
   // Set the guard synchronously before the first await.
   submissionInProgress.current = true;
-}
 
   try {
     setLoading(true);
@@ -71,8 +65,6 @@ console.log("Idempotency key:", idempotencyKeyRef.current);
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // Include the idempotency key in the request headers
-        "Idempotency-Key": idempotencyKeyRef.current,
       },
       credentials: "include",
       body: JSON.stringify({
@@ -89,8 +81,6 @@ console.log("Idempotency key:", idempotencyKeyRef.current);
     }
 
     setTrxAddSucess("Transaction saved successfully!");
-    // Reset the idempotency key and form data after a successful submission
-    idempotencyKeyRef.current = null;
     setFormData({
       type: "expense",
       date: new Date().toISOString().split("T")[0],
