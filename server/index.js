@@ -6,6 +6,9 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const errorMiddleware = require("./middleware/error.middleware");
 
+// Import the validateBody middleware
+const validateBody = require("./middleware/validateBody.middleware");
+
 const app = express();
 
 
@@ -42,7 +45,8 @@ const allowedOrigins = rawOrigins
 }));
 
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: "100kb" }));
+app.use(validateBody); // Apply the validateBody middleware to all routes
 
 
 const authRoute = require('./routes/auth.route.js');

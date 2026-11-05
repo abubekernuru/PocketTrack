@@ -7,32 +7,12 @@ const {
     TRANSACTION_CATEGORIES,
 } = require("../constants/transaction.constants");
 
+// validation utility function
+const { validateAmount } = require("../utils/validation");
 
 const addTransaction = async (req, res, next) => {
     try {
             // 1. Allow only supported transaction fields
-        const allowedFields = [
-            "type",
-            "amount",
-            "category",
-            "description",
-            "date",
-        ];
-
-        const unexpectedFields = Object.keys(req.body || {}).filter(
-            (field) => !allowedFields.includes(field)
-        );
-
-        if (unexpectedFields.length > 0) {
-            return next(
-                new ErrorHandler(
-                    `Unexpected field(s): ${unexpectedFields.join(", ")}`,
-                    400
-                )
-            );
-        }
-
-        // 2. Extract transaction data
         const { type, amount, category, description, date } = req.body;
 
         // validate required fields
@@ -60,10 +40,15 @@ const addTransaction = async (req, res, next) => {
         }
 
         // validate amount
+        const numericAmount = validateAmount(amount);
 
-        const numericAmount = Number(amount);
-        if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
-            return next(new ErrorHandler("Transaction amount must be a positive number", 400));
+        if (numericAmount === null) {
+            return next(
+                new ErrorHandler(
+                    "Transaction amount must be a valid positive number",
+                    400
+                )
+            );
         }
 
         // validate description
@@ -439,27 +424,7 @@ const updateTransaction = async (req, res, next) => {
                 )
             );
         }
-                // Allow only supported transaction fields
-        const allowedFields = [
-            "type",
-            "amount",
-            "category",
-            "description",
-            "date",
-        ];
-
-        const unexpectedFields = Object.keys(req.body || {}).filter(
-            (field) => !allowedFields.includes(field)
-        );
-
-        if (unexpectedFields.length > 0) {
-            return next(
-                new ErrorHandler(
-                    `Unexpected field(s): ${unexpectedFields.join(", ")}`,
-                    400
-                )
-            );
-        }
+        
         const {
             type,
             amount,
@@ -524,15 +489,12 @@ const updateTransaction = async (req, res, next) => {
 
         // 5. Validate amount
 
-        const numericAmount = Number(amount);
+        const numericAmount = validateAmount(amount);
 
-        if (
-            !Number.isFinite(numericAmount) ||
-            numericAmount <= 0
-        ) {
+        if (numericAmount === null) {
             return next(
                 new ErrorHandler(
-                    "Transaction amount must be a positive number",
+                    "Transaction amount must be a valid positive number",
                     400
                 )
             );
