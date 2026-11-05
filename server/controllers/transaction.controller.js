@@ -10,7 +10,30 @@ const {
 
 const addTransaction = async (req, res, next) => {
     try {
-        const {type, amount, category, description, date} = req.body;
+            // 1. Allow only supported transaction fields
+        const allowedFields = [
+            "type",
+            "amount",
+            "category",
+            "description",
+            "date",
+        ];
+
+        const unexpectedFields = Object.keys(req.body || {}).filter(
+            (field) => !allowedFields.includes(field)
+        );
+
+        if (unexpectedFields.length > 0) {
+            return next(
+                new ErrorHandler(
+                    `Unexpected field(s): ${unexpectedFields.join(", ")}`,
+                    400
+                )
+            );
+        }
+
+        // 2. Extract transaction data
+        const { type, amount, category, description, date } = req.body;
 
         // validate required fields
 
@@ -416,7 +439,27 @@ const updateTransaction = async (req, res, next) => {
                 )
             );
         }
+                // Allow only supported transaction fields
+        const allowedFields = [
+            "type",
+            "amount",
+            "category",
+            "description",
+            "date",
+        ];
 
+        const unexpectedFields = Object.keys(req.body || {}).filter(
+            (field) => !allowedFields.includes(field)
+        );
+
+        if (unexpectedFields.length > 0) {
+            return next(
+                new ErrorHandler(
+                    `Unexpected field(s): ${unexpectedFields.join(", ")}`,
+                    400
+                )
+            );
+        }
         const {
             type,
             amount,
